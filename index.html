@@ -1,0 +1,1407 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A gothic pixel-card mana curve counter for tracking deck costs while drafting.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23120d18'/%3E%3Ccircle cx='32' cy='32' r='22' fill='%231f54b3' stroke='%23f3c956' stroke-width='6'/%3E%3Ctext x='32' y='43' text-anchor='middle' font-size='30' font-family='Georgia' font-weight='900' fill='%23f4ead3'%3E0%3C/text%3E%3C/svg%3E">
+  <title>Mana Curve Counter</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0d0b13;
+      --bg-2: #171220;
+      --panel: #16111d;
+      --panel-2: #21192a;
+      --panel-3: #120e18;
+      --card: #191321;
+      --card-hi: #251b30;
+      --line: #45364b;
+      --line-soft: #2b2233;
+      --gold: #f3c956;
+      --gold-2: #9a6c23;
+      --gold-3: #3c2a12;
+      --blue: #2f69d7;
+      --blue-hi: #9bc8ff;
+      --wine: #83283c;
+      --red: #e24743;
+      --green: #86d84e;
+      --purple: #b79be6;
+      --paper: #f4ead3;
+      --muted: #b5a3ca;
+      --quiet: #766785;
+      --ink: #09070c;
+      --shadow: 0 16px 0 rgba(0, 0, 0, 0.34), 0 24px 42px rgba(0, 0, 0, 0.42);
+      --pixel-shadow: 3px 3px 0 #09070c, -1px -1px 0 rgba(255, 255, 255, 0.14);
+      font-family: "Trebuchet MS", "Lucida Sans Unicode", Verdana, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      min-width: 320px;
+      background: var(--bg);
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--paper);
+      background:
+        linear-gradient(45deg, rgba(255, 255, 255, 0.025) 25%, transparent 25%) 0 0 / 34px 34px,
+        linear-gradient(-45deg, rgba(255, 255, 255, 0.024) 25%, transparent 25%) 0 0 / 34px 34px,
+        radial-gradient(circle at 48% -10%, rgba(78, 36, 83, 0.28), transparent 32rem),
+        linear-gradient(180deg, #100c17 0%, #0a0810 100%);
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(90deg, transparent, rgba(243, 201, 86, 0.08), transparent) 50% 0 / min(1200px, 90vw) 1px no-repeat,
+        repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.018) 0 1px, transparent 1px 4px);
+      mix-blend-mode: screen;
+      opacity: 0.65;
+    }
+
+    button {
+      border: 0;
+      font: inherit;
+      color: inherit;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    button:focus-visible {
+      outline: 3px solid var(--blue-hi);
+      outline-offset: 3px;
+    }
+
+    .app {
+      width: min(1500px, calc(100% - 28px));
+      min-height: 100vh;
+      margin: 0 auto;
+      padding: 18px 0 28px;
+    }
+
+    .frame {
+      position: relative;
+      min-height: calc(100vh - 46px);
+      padding: 22px;
+      border: 2px solid var(--gold-2);
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.03), transparent 120px),
+        rgba(17, 12, 22, 0.92);
+      box-shadow: var(--shadow), inset 0 0 0 3px var(--gold-3), inset 0 0 0 5px #0b0710;
+    }
+
+    .frame::before,
+    .frame::after {
+      content: "";
+      position: absolute;
+      width: 34px;
+      height: 34px;
+      pointer-events: none;
+      border-color: var(--gold);
+      opacity: 0.9;
+    }
+
+    .frame::before {
+      top: 8px;
+      left: 8px;
+      border-top: 4px solid;
+      border-left: 4px solid;
+      box-shadow: 8px 8px 0 -4px var(--gold-2);
+    }
+
+    .frame::after {
+      right: 8px;
+      bottom: 8px;
+      border-right: 4px solid;
+      border-bottom: 4px solid;
+      box-shadow: -8px -8px 0 -4px var(--gold-2);
+    }
+
+    .topbar {
+      display: grid;
+      grid-template-columns: 156px minmax(0, 1fr) 156px;
+      align-items: center;
+      gap: 18px;
+      margin-bottom: 16px;
+    }
+
+    .crest {
+      min-height: 74px;
+      display: grid;
+      place-items: center;
+      border: 2px solid var(--gold-2);
+      background: linear-gradient(180deg, #211728, #120d18);
+      box-shadow: inset 0 0 0 3px #0b0810, inset 0 0 0 5px #382817;
+    }
+
+    .bat-mark {
+      position: relative;
+      width: 86px;
+      height: 38px;
+      filter: drop-shadow(4px 4px 0 #08060b);
+    }
+
+    .bat-mark::before,
+    .bat-mark::after {
+      content: "";
+      position: absolute;
+      top: 8px;
+      width: 45px;
+      height: 28px;
+      background:
+        linear-gradient(135deg, transparent 0 20%, #504063 20% 42%, transparent 42% 58%, #2d2339 58% 76%, transparent 76%),
+        #1a1422;
+      border: 2px solid #665579;
+    }
+
+    .bat-mark::before {
+      left: 0;
+      transform: skewY(-16deg);
+      clip-path: polygon(0 26%, 40% 0, 54% 38%, 72% 5%, 100% 62%, 78% 100%, 42% 72%, 0 100%);
+    }
+
+    .bat-mark::after {
+      right: 0;
+      transform: skewY(16deg);
+      clip-path: polygon(0 62%, 28% 5%, 46% 38%, 60% 0, 100% 26%, 100% 100%, 58% 72%, 22% 100%);
+    }
+
+    .bat-body {
+      position: absolute;
+      left: 36px;
+      top: 5px;
+      width: 16px;
+      height: 29px;
+      background: #15101c;
+      border: 2px solid #6f5b83;
+      box-shadow: inset 0 -7px 0 #261d30;
+      z-index: 2;
+    }
+
+    .bat-body::before,
+    .bat-body::after {
+      content: "";
+      position: absolute;
+      bottom: 4px;
+      width: 4px;
+      height: 4px;
+      background: #df3f44;
+    }
+
+    .bat-body::before {
+      left: 2px;
+    }
+
+    .bat-body::after {
+      right: 2px;
+    }
+
+    .title-block {
+      text-align: center;
+      min-width: 0;
+    }
+
+    h1 {
+      margin: 0;
+      color: var(--gold);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(2.5rem, 6.3vw, 5.8rem);
+      line-height: 0.9;
+      letter-spacing: 0;
+      text-shadow: 5px 5px 0 #09070c, 0 0 18px rgba(243, 201, 86, 0.26);
+    }
+
+    .subtitle {
+      margin: 12px 0 0;
+      color: var(--purple);
+      font-size: clamp(1rem, 2vw, 1.65rem);
+      line-height: 1.1;
+      text-shadow: 3px 3px 0 #09070c;
+    }
+
+    .settings-tile {
+      min-height: 74px;
+      display: grid;
+      place-items: center;
+      border: 2px solid var(--gold-2);
+      background: linear-gradient(180deg, #1e1726, #120d18);
+      box-shadow: inset 0 0 0 3px #0b0810, inset 0 0 0 5px #382817;
+      color: #a997be;
+    }
+
+    .gear-icon {
+      width: 42px;
+      height: 42px;
+      display: block;
+    }
+
+    .hud {
+      display: grid;
+      grid-template-columns: minmax(180px, 250px) minmax(240px, 1fr) auto auto;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .hud-panel,
+    .tool-button {
+      min-height: 78px;
+      border: 2px solid var(--line);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), transparent), var(--panel);
+      box-shadow: inset 0 0 0 3px #08060c, inset 0 0 0 5px #2b2030;
+    }
+
+    .hud-panel {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 18px;
+      gap: 16px;
+    }
+
+    .total-panel {
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .label {
+      color: var(--purple);
+      font-weight: 800;
+      font-size: 0.9rem;
+      line-height: 1;
+      text-transform: uppercase;
+    }
+
+    .total-count {
+      color: var(--gold);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 3.1rem;
+      font-weight: 900;
+      line-height: 0.9;
+      text-shadow: var(--pixel-shadow);
+    }
+
+    .save-mark {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      align-items: center;
+      justify-self: start;
+      gap: 14px;
+      width: 100%;
+      max-width: 620px;
+      color: var(--muted);
+      font-size: 1rem;
+    }
+
+    .save-check {
+      width: 34px;
+      height: 34px;
+      color: var(--green);
+    }
+
+    .save-title {
+      display: block;
+      color: #a6f36e;
+      font-weight: 900;
+      font-size: 1.1rem;
+      line-height: 1.1;
+    }
+
+    .save-detail {
+      display: block;
+      line-height: 1.2;
+    }
+
+    .tool-button {
+      display: inline-grid;
+      grid-template-columns: auto auto;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      min-width: 160px;
+      padding: 12px 20px;
+      color: var(--purple);
+      font-size: 1.15rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      box-shadow: inset 0 0 0 3px #08060c, inset 0 0 0 5px #3a2a40;
+    }
+
+    .tool-button svg {
+      width: 30px;
+      height: 30px;
+    }
+
+    .tool-button:hover {
+      color: var(--paper);
+      transform: translateY(-1px);
+    }
+
+    .tool-button:disabled {
+      cursor: not-allowed;
+      opacity: 0.45;
+      transform: none;
+    }
+
+    .reset-button {
+      color: #ff6a58;
+      border-color: #883a38;
+      box-shadow: inset 0 0 0 3px #08060c, inset 0 0 0 5px #4b1f25;
+    }
+
+    .board {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(190px, 230px);
+      gap: 16px;
+      align-items: stretch;
+    }
+
+    .counter-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(166px, 1fr));
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .cost-card {
+      position: relative;
+      min-height: 328px;
+      padding: 16px 13px 13px;
+      border: 2px solid var(--gold-2);
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.045), transparent 22%),
+        repeating-linear-gradient(0deg, transparent 0 9px, rgba(255, 255, 255, 0.018) 9px 10px),
+        linear-gradient(180deg, var(--card-hi), var(--card));
+      box-shadow: inset 0 0 0 3px #08060c, inset 0 0 0 5px #3a2a14, 0 10px 0 rgba(0, 0, 0, 0.28);
+      display: grid;
+      grid-template-rows: auto auto auto 1fr auto;
+      justify-items: center;
+      gap: 11px;
+      isolation: isolate;
+    }
+
+    .cost-card::before,
+    .cost-card::after {
+      content: "";
+      position: absolute;
+      top: 11px;
+      width: 16px;
+      height: 16px;
+      border-top: 3px solid var(--gold);
+      opacity: 0.8;
+    }
+
+    .cost-card::before {
+      left: 11px;
+      border-left: 3px solid var(--gold);
+    }
+
+    .cost-card::after {
+      right: 11px;
+      border-right: 3px solid var(--gold);
+    }
+
+    .mana-orb {
+      width: 80px;
+      height: 80px;
+      display: grid;
+      place-items: center;
+      color: #f6fbff;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 2.45rem;
+      font-weight: 900;
+      line-height: 1;
+      border-radius: 50%;
+      border: 4px solid #c08a26;
+      background:
+        radial-gradient(circle at 32% 25%, #bce5ff 0 10%, transparent 11%),
+        radial-gradient(circle at 50% 58%, #1f54b3 0 40%, #103279 66%, #081c46 100%);
+      box-shadow:
+        0 0 0 4px #19101b,
+        0 0 0 7px #9a6c23,
+        inset 0 0 16px rgba(155, 200, 255, 0.65),
+        5px 6px 0 #08060c;
+      text-shadow: 3px 3px 0 #0b1b42;
+    }
+
+    .count {
+      color: var(--paper);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(3.1rem, 7vw, 4.8rem);
+      font-weight: 900;
+      line-height: 0.95;
+      text-shadow: var(--pixel-shadow);
+      min-height: 1em;
+    }
+
+    .stepper {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      width: min(138px, 100%);
+      gap: 10px;
+    }
+
+    .step-button {
+      min-height: 52px;
+      border: 2px solid #3a2f36;
+      background: #201724;
+      box-shadow: inset 0 0 0 3px #08060c, 3px 4px 0 #09070c;
+      display: grid;
+      place-items: center;
+      font-size: 2.1rem;
+      font-weight: 900;
+      line-height: 0.7;
+    }
+
+    .step-button:hover {
+      filter: brightness(1.15);
+      transform: translateY(-1px);
+    }
+
+    .step-button:active {
+      transform: translateY(2px);
+      box-shadow: inset 0 0 0 3px #08060c, 1px 2px 0 #09070c;
+    }
+
+    .minus {
+      color: #ff665a;
+      background: linear-gradient(180deg, #3e1c28, #23131d);
+    }
+
+    .plus {
+      color: #9df461;
+      background: linear-gradient(180deg, #21391d, #132313);
+    }
+
+    .card-divider {
+      width: 100%;
+      height: 2px;
+      margin-top: 2px;
+      background: repeating-linear-gradient(90deg, var(--line) 0 8px, transparent 8px 14px);
+      align-self: end;
+    }
+
+    .card-stats {
+      align-self: stretch;
+      display: grid;
+      gap: 7px;
+      text-align: center;
+      font-weight: 800;
+    }
+
+    .share {
+      color: var(--gold);
+      font-size: 1.28rem;
+      line-height: 1;
+      text-shadow: 2px 2px 0 #08060c;
+    }
+
+    .target {
+      color: var(--muted);
+      line-height: 1.15;
+      font-size: 0.98rem;
+    }
+
+    .advice {
+      min-height: 22px;
+      color: var(--blue-hi);
+      font-size: 0.88rem;
+      line-height: 1.1;
+      text-transform: uppercase;
+    }
+
+    .advice.good {
+      color: #b5f17c;
+    }
+
+    .advice.over {
+      color: #ff9b71;
+    }
+
+    .side-panel {
+      display: grid;
+      grid-template-rows: auto auto 1fr;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .add-cost {
+      min-height: 156px;
+      padding: 16px;
+      border: 2px solid var(--gold-2);
+      background:
+        linear-gradient(180deg, rgba(42, 101, 208, 0.18), transparent),
+        var(--panel-2);
+      box-shadow: inset 0 0 0 3px #08060c, inset 0 0 0 5px #3a2a14, 0 10px 0 rgba(0, 0, 0, 0.28);
+      display: grid;
+      justify-items: center;
+      align-content: center;
+      gap: 12px;
+      color: var(--gold);
+      text-align: center;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .add-cost:hover {
+      filter: brightness(1.1);
+      transform: translateY(-1px);
+    }
+
+    .add-cost svg {
+      width: 42px;
+      height: 42px;
+      color: var(--blue-hi);
+    }
+
+    .add-cost span {
+      display: block;
+      font-size: 1.25rem;
+      line-height: 1.1;
+      text-shadow: 2px 2px 0 #08060c;
+    }
+
+    .summary-card,
+    .notes-card {
+      border: 2px solid var(--line);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.025), transparent), var(--panel);
+      box-shadow: inset 0 0 0 3px #08060c, inset 0 0 0 5px #2b2030;
+      padding: 18px;
+    }
+
+    .summary-list {
+      display: grid;
+      gap: 13px;
+    }
+
+    .summary-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 16px;
+      align-items: baseline;
+      padding-bottom: 11px;
+      border-bottom: 2px dashed rgba(243, 201, 86, 0.2);
+      color: var(--muted);
+      font-weight: 800;
+    }
+
+    .summary-row:last-child {
+      border-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .summary-value {
+      color: var(--gold);
+      font-size: 1.7rem;
+      font-weight: 900;
+      line-height: 1;
+      text-shadow: 2px 2px 0 #08060c;
+    }
+
+    .notes-card {
+      align-self: stretch;
+      display: grid;
+      align-content: start;
+      gap: 10px;
+      color: var(--muted);
+      line-height: 1.35;
+    }
+
+    .notes-title {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      color: var(--purple);
+      font-size: 1.06rem;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .notes-title svg {
+      width: 27px;
+      height: 27px;
+      color: var(--gold);
+    }
+
+    .curve-section {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(260px, 420px);
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .curve-panel,
+    .target-panel {
+      min-width: 0;
+      border: 2px solid var(--line);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.025), transparent), var(--panel);
+      box-shadow: inset 0 0 0 3px #08060c, inset 0 0 0 5px #2b2030;
+      padding: 18px;
+    }
+
+    .section-heading {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+      color: var(--purple);
+      font-size: 1.25rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      text-shadow: 2px 2px 0 #08060c;
+    }
+
+    .section-heading svg {
+      width: 28px;
+      height: 28px;
+      color: var(--purple);
+    }
+
+    .bars {
+      display: grid;
+      grid-template-columns: repeat(var(--bar-count), minmax(30px, 1fr));
+      gap: 7px;
+      align-items: end;
+      min-height: 150px;
+      padding: 10px 10px 4px;
+      border: 2px solid #33273a;
+      background:
+        repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.045) 0 1px, transparent 1px 24px),
+        #120d18;
+      box-shadow: inset 0 0 0 3px #08060c;
+    }
+
+    .bar-cell {
+      display: grid;
+      grid-template-rows: 1fr auto;
+      gap: 8px;
+      min-width: 0;
+      align-self: stretch;
+    }
+
+    .bar-stack {
+      position: relative;
+      align-self: end;
+      min-height: 22px;
+      background: linear-gradient(180deg, #ffe37c, #f4c313 55%, #ca6614);
+      box-shadow: inset 0 -6px 0 rgba(0, 0, 0, 0.16), 0 4px 0 #09070c;
+    }
+
+    .bar-stack.low {
+      background: linear-gradient(180deg, #fff1a1, #f3d13a);
+    }
+
+    .bar-stack.mid {
+      background: linear-gradient(180deg, #ffd251, #e37a17);
+    }
+
+    .bar-stack.high {
+      background: linear-gradient(180deg, #f06034, #8e2441);
+    }
+
+    .bar-stack.very-high {
+      background: linear-gradient(180deg, #a84aa5, #522767);
+    }
+
+    .bar-label {
+      color: var(--paper);
+      text-align: center;
+      font-size: 1rem;
+      font-weight: 900;
+      line-height: 1;
+      text-shadow: 2px 2px 0 #08060c;
+    }
+
+    .target-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(72px, 1fr));
+      gap: 8px;
+    }
+
+    .target-chip {
+      padding: 10px 8px;
+      border-left: 2px solid rgba(243, 201, 86, 0.28);
+      border-right: 2px solid rgba(243, 201, 86, 0.12);
+      background: rgba(255, 255, 255, 0.025);
+      text-align: center;
+      line-height: 1.1;
+    }
+
+    .target-chip strong {
+      display: block;
+      color: var(--blue-hi);
+      font-size: 0.95rem;
+      margin-bottom: 4px;
+    }
+
+    .target-chip span {
+      color: var(--gold);
+      font-weight: 900;
+      font-size: 1.1rem;
+    }
+
+    .target-note {
+      margin: 12px 0 0;
+      color: var(--muted);
+      line-height: 1.35;
+      font-size: 0.95rem;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    @media (max-width: 1120px) {
+      .topbar {
+        grid-template-columns: 112px minmax(0, 1fr) 112px;
+      }
+
+      .hud {
+        grid-template-columns: minmax(160px, 220px) 1fr;
+      }
+
+      .tool-button {
+        min-width: 0;
+      }
+
+      .board,
+      .curve-section {
+        grid-template-columns: 1fr;
+      }
+
+      .side-panel {
+        grid-template-columns: minmax(190px, 230px) 1fr 1.2fr;
+        grid-template-rows: auto;
+      }
+
+      .add-cost {
+        min-height: 132px;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .app {
+        width: min(100% - 16px, 760px);
+        padding-top: 8px;
+      }
+
+      .frame {
+        min-height: auto;
+        padding: 14px;
+      }
+
+      .topbar {
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+
+      .crest,
+      .settings-tile {
+        display: none;
+      }
+
+      h1 {
+        font-size: clamp(2.35rem, 16vw, 4rem);
+      }
+
+      .subtitle {
+        font-size: 1rem;
+      }
+
+      .hud {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .hud-panel {
+        min-height: 72px;
+      }
+
+      .save-panel {
+        grid-column: 1 / -1;
+        order: 3;
+      }
+
+      .tool-button {
+        min-height: 64px;
+        padding: 10px 12px;
+        font-size: 0.98rem;
+      }
+
+      .tool-button svg {
+        width: 24px;
+        height: 24px;
+      }
+
+      .counter-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .cost-card {
+        min-height: 290px;
+        padding: 14px 10px 12px;
+      }
+
+      .mana-orb {
+        width: 68px;
+        height: 68px;
+        font-size: 2rem;
+      }
+
+      .count {
+        font-size: 3.2rem;
+      }
+
+      .step-button {
+        min-height: 48px;
+      }
+
+      .side-panel {
+        grid-template-columns: 1fr;
+      }
+
+      .curve-panel,
+      .target-panel,
+      .summary-card,
+      .notes-card {
+        padding: 14px;
+      }
+
+      .bars {
+        gap: 5px;
+        padding: 8px;
+      }
+    }
+
+    @media (max-width: 430px) {
+      .counter-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hud {
+        grid-template-columns: 1fr;
+      }
+
+      .save-panel {
+        order: initial;
+      }
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+      .cost-card,
+      .tool-button,
+      .add-cost,
+      .step-button {
+        transition: transform 120ms ease, filter 120ms ease, color 120ms ease;
+      }
+
+      .bar-stack {
+        transition: height 180ms ease;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <section class="frame" aria-labelledby="page-title">
+      <div class="topbar">
+        <div class="crest" aria-hidden="true">
+          <div class="bat-mark">
+            <span class="bat-body"></span>
+          </div>
+        </div>
+
+        <div class="title-block">
+          <h1 id="page-title">Mana Curve Counter</h1>
+          <p class="subtitle">Track deck costs while you draft</p>
+        </div>
+
+        <div class="settings-tile" aria-hidden="true">
+          <svg class="gear-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true">
+            <path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1 2.1"></path>
+            <rect x="8" y="8" width="8" height="8"></rect>
+          </svg>
+        </div>
+      </div>
+
+      <div class="hud" aria-label="Deck summary">
+        <div class="hud-panel total-panel">
+          <span class="label">Total Cards</span>
+          <strong class="total-count" id="total-count">0</strong>
+        </div>
+
+        <div class="hud-panel save-panel">
+          <div class="save-mark">
+            <svg class="save-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true">
+              <path d="M4 12.5l5 5L20 6"></path>
+            </svg>
+            <span>
+              <span class="save-title" id="save-title">Autosaved</span>
+              <span class="save-detail" id="save-detail">ready</span>
+            </span>
+          </div>
+        </div>
+
+        <button class="tool-button reset-button" type="button" id="reset-button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true">
+            <path d="M19 8a8 8 0 1 0 1 7"></path>
+            <path d="M19 3v5h-5"></path>
+          </svg>
+          Reset
+        </button>
+
+        <button class="tool-button" type="button" id="undo-button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true">
+            <path d="M9 7H4v5"></path>
+            <path d="M4 12c3-5 13-5 16 3"></path>
+          </svg>
+          Undo
+        </button>
+      </div>
+
+      <div class="board">
+        <section class="counter-grid" id="counter-grid" aria-label="Mana cost counters"></section>
+
+        <aside class="side-panel" aria-label="Tools and deck stats">
+          <button class="add-cost" id="add-cost-button" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true">
+              <path d="M12 4v16M4 12h16"></path>
+              <rect x="3" y="3" width="18" height="18"></rect>
+            </svg>
+            <span id="add-cost-label">Add 6</span>
+          </button>
+
+          <div class="summary-card">
+            <div class="summary-list">
+              <div class="summary-row">
+                <span>Average Cost</span>
+                <strong class="summary-value" id="average-cost">0</strong>
+              </div>
+              <div class="summary-row">
+                <span>Max Cost</span>
+                <strong class="summary-value" id="max-cost">0</strong>
+              </div>
+              <div class="summary-row">
+                <span>Target Sum</span>
+                <strong class="summary-value" id="target-sum">0</strong>
+              </div>
+            </div>
+          </div>
+
+          <div class="notes-card">
+            <div class="notes-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true">
+                <path d="M7 4h11v16H7z"></path>
+                <path d="M5 6h2M5 10h2M5 14h2M5 18h2M10 8h5M10 12h5M10 16h4"></path>
+              </svg>
+              Combo Ladder
+            </div>
+            <div>Low costs feed the chain. The target curve gives the most space to 0-cost cards, then tapers each cost after that.</div>
+          </div>
+        </aside>
+      </div>
+
+      <section class="curve-section">
+        <div class="curve-panel">
+          <div class="section-heading">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <rect x="4" y="13" width="3" height="7"></rect>
+              <rect x="10" y="8" width="3" height="12"></rect>
+              <rect x="16" y="4" width="3" height="16"></rect>
+            </svg>
+            Mana Curve
+          </div>
+          <div class="bars" id="curve-bars" aria-label="Mana curve chart"></div>
+        </div>
+
+        <div class="target-panel">
+          <div class="section-heading">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true">
+              <path d="M12 3v18M3 12h18"></path>
+              <path d="M6 6l12 12M18 6L6 18"></path>
+            </svg>
+            Target Ratio
+          </div>
+          <div class="target-grid" id="target-grid" aria-label="Calculated target ratios"></div>
+          <p class="target-note">Targets recalculate from your current deck total and visible costs using the combo-ladder curve.</p>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <template id="cost-card-template">
+    <article class="cost-card">
+      <div class="mana-orb" data-cost-label></div>
+      <div class="count" data-count></div>
+      <div class="stepper">
+        <button class="step-button minus" type="button" data-action="decrement" aria-label="">-</button>
+        <button class="step-button plus" type="button" data-action="increment" aria-label="">+</button>
+      </div>
+      <div class="card-divider" aria-hidden="true"></div>
+      <div class="card-stats">
+        <div class="share" data-share></div>
+        <div class="target" data-target></div>
+        <div class="advice" data-advice></div>
+      </div>
+    </article>
+  </template>
+
+  <script>
+    const STORAGE_KEY = "vc-mana-counter-v1";
+    const DEFAULT_COSTS = [0, 1, 2, 3, 4, 5];
+    const HISTORY_LIMIT = 60;
+
+    const state = {
+      costs: [...DEFAULT_COSTS],
+      counts: Object.fromEntries(DEFAULT_COSTS.map((cost) => [cost, 0])),
+      history: []
+    };
+
+    const els = {
+      grid: document.querySelector("#counter-grid"),
+      bars: document.querySelector("#curve-bars"),
+      targetGrid: document.querySelector("#target-grid"),
+      totalCount: document.querySelector("#total-count"),
+      averageCost: document.querySelector("#average-cost"),
+      maxCost: document.querySelector("#max-cost"),
+      targetSum: document.querySelector("#target-sum"),
+      addCostButton: document.querySelector("#add-cost-button"),
+      addCostLabel: document.querySelector("#add-cost-label"),
+      undoButton: document.querySelector("#undo-button"),
+      resetButton: document.querySelector("#reset-button"),
+      saveTitle: document.querySelector("#save-title"),
+      saveDetail: document.querySelector("#save-detail"),
+      template: document.querySelector("#cost-card-template")
+    };
+
+    let saveTimer = null;
+    let lastSavedAt = null;
+
+    function normalizeCosts(costs) {
+      const parsed = costs
+        .map((cost) => Number(cost))
+        .filter((cost) => Number.isInteger(cost) && cost >= 0);
+      const merged = [...new Set([...DEFAULT_COSTS, ...parsed])];
+      return merged.sort((a, b) => a - b);
+    }
+
+    function cloneSnapshot() {
+      return {
+        costs: [...state.costs],
+        counts: Object.fromEntries(state.costs.map((cost) => [cost, Number(state.counts[cost] || 0)]))
+      };
+    }
+
+    function pushHistory() {
+      state.history.push(cloneSnapshot());
+      if (state.history.length > HISTORY_LIMIT) {
+        state.history.shift();
+      }
+    }
+
+    function restoreSnapshot(snapshot) {
+      state.costs = normalizeCosts(snapshot.costs || DEFAULT_COSTS);
+      state.counts = {};
+      state.costs.forEach((cost) => {
+        state.counts[cost] = Math.max(0, Number(snapshot.counts?.[cost] || 0));
+      });
+    }
+
+    function loadState() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null");
+        if (!saved || typeof saved !== "object") return;
+        restoreSnapshot(saved);
+        lastSavedAt = saved.savedAt ? new Date(saved.savedAt) : null;
+      } catch {
+        localStorage.removeItem(STORAGE_KEY);
+      }
+    }
+
+    function saveState() {
+      const payload = {
+        costs: state.costs,
+        counts: state.counts,
+        savedAt: new Date().toISOString()
+      };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+      lastSavedAt = new Date(payload.savedAt);
+      updateSaveStatus("Autosaved", "just now");
+      clearTimeout(saveTimer);
+      saveTimer = window.setTimeout(() => updateSaveStatus("Autosaved", formatSavedTime()), 3000);
+    }
+
+    function updateSaveStatus(title, detail) {
+      els.saveTitle.textContent = title;
+      els.saveDetail.textContent = detail;
+    }
+
+    function formatSavedTime() {
+      if (!lastSavedAt) return "ready";
+      const seconds = Math.max(0, Math.round((Date.now() - lastSavedAt.getTime()) / 1000));
+      if (seconds < 5) return "just now";
+      if (seconds < 60) return `${seconds}s ago`;
+      return `${Math.floor(seconds / 60)}m ago`;
+    }
+
+    function totalCards() {
+      return state.costs.reduce((sum, cost) => sum + Number(state.counts[cost] || 0), 0);
+    }
+
+    function maxVisibleCost() {
+      return Math.max(...state.costs);
+    }
+
+    function maxOccupiedCost() {
+      const occupied = state.costs.filter((cost) => Number(state.counts[cost] || 0) > 0);
+      return occupied.length ? Math.max(...occupied) : 0;
+    }
+
+    function averageCost(total) {
+      if (!total) return 0;
+      const weighted = state.costs.reduce((sum, cost) => sum + cost * Number(state.counts[cost] || 0), 0);
+      return weighted / total;
+    }
+
+    function targetWeights() {
+      const max = maxVisibleCost();
+      return Object.fromEntries(state.costs.map((cost) => [cost, (max + 1 - cost) ** 2]));
+    }
+
+    function targetCounts(total) {
+      const weights = targetWeights();
+      const weightTotal = state.costs.reduce((sum, cost) => sum + weights[cost], 0);
+      if (!total || !weightTotal) {
+        return Object.fromEntries(state.costs.map((cost) => [cost, 0]));
+      }
+
+      const rows = state.costs.map((cost) => {
+        const exact = total * weights[cost] / weightTotal;
+        return {
+          cost,
+          exact,
+          base: Math.floor(exact),
+          remainder: exact - Math.floor(exact)
+        };
+      });
+
+      let assigned = rows.reduce((sum, row) => sum + row.base, 0);
+      rows
+        .sort((a, b) => b.remainder - a.remainder || a.cost - b.cost)
+        .forEach((row) => {
+          if (assigned < total) {
+            row.base += 1;
+            assigned += 1;
+          }
+        });
+
+      return Object.fromEntries(rows.map((row) => [row.cost, row.base]));
+    }
+
+    function targetPercentages() {
+      const weights = targetWeights();
+      const weightTotal = state.costs.reduce((sum, cost) => sum + weights[cost], 0);
+      return Object.fromEntries(state.costs.map((cost) => [cost, weightTotal ? weights[cost] / weightTotal * 100 : 0]));
+    }
+
+    function mutate(mutator) {
+      pushHistory();
+      mutator();
+      render();
+      saveState();
+    }
+
+    function increment(cost) {
+      mutate(() => {
+        state.counts[cost] = Number(state.counts[cost] || 0) + 1;
+      });
+    }
+
+    function decrement(cost) {
+      if (Number(state.counts[cost] || 0) <= 0) return;
+      mutate(() => {
+        state.counts[cost] = Math.max(0, Number(state.counts[cost] || 0) - 1);
+      });
+    }
+
+    function addNextCost() {
+      const next = maxVisibleCost() + 1;
+      mutate(() => {
+        state.costs = normalizeCosts([...state.costs, next]);
+        state.counts[next] = Number(state.counts[next] || 0);
+      });
+    }
+
+    function undo() {
+      const snapshot = state.history.pop();
+      if (!snapshot) return;
+      restoreSnapshot(snapshot);
+      render();
+      saveState();
+    }
+
+    function resetCounts() {
+      if (totalCards() === 0) return;
+      mutate(() => {
+        state.costs.forEach((cost) => {
+          state.counts[cost] = 0;
+        });
+      });
+    }
+
+    function costLabel(cost) {
+      return String(cost);
+    }
+
+    function formatPercent(value) {
+      if (!Number.isFinite(value) || value <= 0) return "0%";
+      return `${value.toFixed(value >= 10 ? 0 : 1)}%`;
+    }
+
+    function renderCards(total, targets) {
+      els.grid.innerHTML = "";
+
+      state.costs.forEach((cost) => {
+        const count = Number(state.counts[cost] || 0);
+        const target = targets[cost] || 0;
+        const diff = target - count;
+        const share = total ? count / total * 100 : 0;
+        const node = els.template.content.firstElementChild.cloneNode(true);
+
+        node.querySelector("[data-cost-label]").textContent = costLabel(cost);
+        node.querySelector("[data-count]").textContent = count;
+        node.querySelector("[data-share]").textContent = formatPercent(share);
+        node.querySelector("[data-target]").textContent = `${count} / ${total} | target ${target}`;
+
+        const advice = node.querySelector("[data-advice]");
+        if (total === 0) {
+          advice.textContent = "start deck";
+          advice.className = "advice";
+        } else if (diff > 0) {
+          advice.textContent = `add ${diff}`;
+          advice.className = "advice";
+        } else if (diff < 0) {
+          advice.textContent = `over ${Math.abs(diff)}`;
+          advice.className = "advice over";
+        } else {
+          advice.textContent = "on target";
+          advice.className = "advice good";
+        }
+
+        const minus = node.querySelector("[data-action='decrement']");
+        const plus = node.querySelector("[data-action='increment']");
+        minus.setAttribute("aria-label", `Remove one ${costLabel(cost)} cost card`);
+        plus.setAttribute("aria-label", `Add one ${costLabel(cost)} cost card`);
+        minus.addEventListener("click", () => decrement(cost));
+        plus.addEventListener("click", () => increment(cost));
+
+        els.grid.append(node);
+      });
+    }
+
+    function renderBars(total) {
+      const maxCount = Math.max(1, ...state.costs.map((cost) => Number(state.counts[cost] || 0)));
+      els.bars.innerHTML = "";
+      els.bars.style.setProperty("--bar-count", state.costs.length);
+
+      state.costs.forEach((cost) => {
+        const count = Number(state.counts[cost] || 0);
+        const cell = document.createElement("div");
+        const stack = document.createElement("div");
+        const label = document.createElement("div");
+
+        cell.className = "bar-cell";
+        stack.className = "bar-stack";
+        if (cost <= 1) stack.classList.add("low");
+        else if (cost <= 3) stack.classList.add("mid");
+        else if (cost <= 5) stack.classList.add("high");
+        else stack.classList.add("very-high");
+
+        stack.style.height = `${Math.max(12, count / maxCount * 128)}px`;
+        stack.title = `${costLabel(cost)} cost: ${count} cards`;
+        stack.setAttribute("aria-label", `${costLabel(cost)} cost ${count} cards`);
+        label.className = "bar-label";
+        label.textContent = costLabel(cost);
+
+        if (!total && count === 0) {
+          stack.style.opacity = "0.35";
+        }
+
+        cell.append(stack, label);
+        els.bars.append(cell);
+      });
+    }
+
+    function renderTargets(percentages, targets) {
+      els.targetGrid.innerHTML = "";
+
+      state.costs.forEach((cost) => {
+        const chip = document.createElement("div");
+        const label = document.createElement("strong");
+        const value = document.createElement("span");
+
+        chip.className = "target-chip";
+        label.textContent = `${costLabel(cost)} cost`;
+        value.textContent = `${formatPercent(percentages[cost])} / ${targets[cost] || 0}`;
+
+        chip.append(label, value);
+        els.targetGrid.append(chip);
+      });
+    }
+
+    function render() {
+      const total = totalCards();
+      const targets = targetCounts(total);
+      const percentages = targetPercentages();
+      const targetTotal = state.costs.reduce((sum, cost) => sum + (targets[cost] || 0), 0);
+
+      els.totalCount.textContent = total;
+      els.averageCost.textContent = total ? averageCost(total).toFixed(2) : "0";
+      els.maxCost.textContent = maxOccupiedCost();
+      els.targetSum.textContent = targetTotal;
+      els.addCostLabel.textContent = `Add ${maxVisibleCost() + 1}`;
+      els.undoButton.disabled = state.history.length === 0;
+      els.resetButton.disabled = total === 0;
+
+      renderCards(total, targets);
+      renderBars(total);
+      renderTargets(percentages, targets);
+    }
+
+    els.addCostButton.addEventListener("click", addNextCost);
+    els.undoButton.addEventListener("click", undo);
+    els.resetButton.addEventListener("click", resetCounts);
+
+    window.addEventListener("storage", (event) => {
+      if (event.key !== STORAGE_KEY) return;
+      loadState();
+      render();
+      updateSaveStatus("Synced", formatSavedTime());
+    });
+
+    window.setInterval(() => {
+      updateSaveStatus("Autosaved", formatSavedTime());
+    }, 15000);
+
+    loadState();
+    render();
+    updateSaveStatus(lastSavedAt ? "Autosaved" : "Autosave", lastSavedAt ? formatSavedTime() : "ready");
+  </script>
+</body>
+</html>
