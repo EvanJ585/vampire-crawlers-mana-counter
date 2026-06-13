@@ -24,3 +24,19 @@ The app normalizes those weights into percentages, then rounds target card count
 ## GitHub Pages
 
 This project is a plain static site. Publish from the repository root on the `main` branch.
+
+If using GitHub CLI:
+
+```powershell
+gh repo create vampire-crawlers-mana-counter --public --source . --remote origin --push
+gh api repos/EvanJ585/vampire-crawlers-mana-counter/pages -X POST -f source.branch=main -f source.path=/
+```
+
+If creating the repo manually on GitHub:
+
+```powershell
+git remote add origin https://github.com/EvanJ585/vampire-crawlers-mana-counter.git
+git push -u origin main
+```
+
+Then open the repository settings, go to Pages, and publish from the `main` branch root.
