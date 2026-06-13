@@ -3,9 +3,9 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="A gothic pixel-card mana curve counter for tracking deck costs while drafting.">
+  <meta name="description" content="A gothic pixel-card counter for tracking Vampire Crawlers deck costs while drafting.">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23120d18'/%3E%3Ccircle cx='32' cy='32' r='22' fill='%231f54b3' stroke='%23f3c956' stroke-width='6'/%3E%3Ctext x='32' y='43' text-anchor='middle' font-size='30' font-family='Georgia' font-weight='900' fill='%23f4ead3'%3E0%3C/text%3E%3C/svg%3E">
-  <title>Mana Curve Counter</title>
+  <title>Vampire Crawlers Card Counter</title>
   <style>
     :root {
       color-scheme: dark;
@@ -142,8 +142,8 @@
       margin: 0;
       color: var(--gold);
       font-family: Georgia, "Times New Roman", serif;
-      font-size: clamp(2.5rem, 6.3vw, 5.8rem);
-      line-height: 0.9;
+      font-size: clamp(2.35rem, 4.8vw, 5.2rem);
+      line-height: 0.92;
       letter-spacing: 0;
       text-shadow: 5px 5px 0 #09070c, 0 0 18px rgba(243, 201, 86, 0.26);
     }
@@ -561,13 +561,6 @@
       text-shadow: var(--pixel-shadow);
     }
 
-    .wildcard-note {
-      color: var(--muted);
-      font-weight: 800;
-      line-height: 1.35;
-      max-width: 18rem;
-    }
-
     .wildcard-share {
       color: var(--blue-hi);
       font-size: 1rem;
@@ -752,7 +745,8 @@
       }
 
       h1 {
-        font-size: clamp(2.35rem, 16vw, 4rem);
+        font-size: clamp(2.05rem, 9vw, 3rem);
+        line-height: 0.96;
       }
 
       .subtitle {
@@ -823,6 +817,10 @@
     }
 
     @media (max-width: 430px) {
+      h1 {
+        font-size: clamp(1.95rem, 10vw, 2.6rem);
+      }
+
       .counter-grid {
         grid-template-columns: 1fr;
       }
@@ -855,7 +853,7 @@
     <section class="frame" aria-labelledby="page-title">
       <div class="topbar">
         <div class="title-block">
-          <h1 id="page-title">Mana Curve Counter</h1>
+          <h1 id="page-title">Vampire Crawlers Card Counter</h1>
           <p class="subtitle">Track deck costs while you draft</p>
         </div>
       </div>
@@ -921,7 +919,6 @@
             </div>
             <div class="card-divider" aria-hidden="true"></div>
             <div class="wildcard-share" id="wildcard-share">0% of deck</div>
-            <div class="wildcard-note">Use these as missing combo numbers when your hand skips a step.</div>
           </section>
         </aside>
       </div>
@@ -1102,15 +1099,25 @@
       return Object.fromEntries(state.costs.map((cost) => [cost, (max + 1 - cost) ** 2]));
     }
 
-    function targetCounts(total) {
-      const weights = targetWeights();
-      const weightTotal = state.costs.reduce((sum, cost) => sum + weights[cost], 0);
+    function zeroTargets() {
+      return Object.fromEntries(state.costs.map((cost) => [cost, 0]));
+    }
+
+    function minimumTargetForCost(cost, total) {
+      if (cost < 5 || total <= 0) return 0;
+
+      const firstCopyAt = 24 + (cost - 5) * 16;
+      return total >= firstCopyAt ? Math.floor((total - firstCopyAt) / 16) + 1 : 0;
+    }
+
+    function roundWeightedCounts(total, weights) {
+      const weightTotal = state.costs.reduce((sum, cost) => sum + Number(weights[cost] || 0), 0);
       if (!total || !weightTotal) {
         return Object.fromEntries(state.costs.map((cost) => [cost, 0]));
       }
 
       const rows = state.costs.map((cost) => {
-        const exact = total * weights[cost] / weightTotal;
+        const exact = total * Number(weights[cost] || 0) / weightTotal;
         return {
           cost,
           exact,
@@ -1132,10 +1139,29 @@
       return Object.fromEntries(rows.map((row) => [row.cost, row.base]));
     }
 
-    function targetPercentages() {
+    function targetCounts(total) {
       const weights = targetWeights();
-      const weightTotal = state.costs.reduce((sum, cost) => sum + weights[cost], 0);
-      return Object.fromEntries(state.costs.map((cost) => [cost, weightTotal ? weights[cost] / weightTotal * 100 : 0]));
+      if (!total) return zeroTargets();
+
+      const minimums = Object.fromEntries(
+        state.costs.map((cost) => [cost, minimumTargetForCost(cost, total)])
+      );
+      const minimumTotal = state.costs.reduce((sum, cost) => sum + minimums[cost], 0);
+
+      if (minimumTotal >= total) {
+        return roundWeightedCounts(total, minimums);
+      }
+
+      const rounded = roundWeightedCounts(total - minimumTotal, weights);
+      return Object.fromEntries(
+        state.costs.map((cost) => [cost, minimums[cost] + (rounded[cost] || 0)])
+      );
+    }
+
+    function targetPercentages(targets, total) {
+      return Object.fromEntries(
+        state.costs.map((cost) => [cost, total ? (targets[cost] || 0) / total * 100 : 0])
+      );
     }
 
     function mutate(mutator) {
@@ -1302,7 +1328,7 @@
       const numberedTotal = numberedCards();
       const wildcards = Number(state.wildcards || 0);
       const targets = targetCounts(numberedTotal);
-      const percentages = targetPercentages();
+      const percentages = targetPercentages(targets, numberedTotal);
       const wildcardShare = total ? wildcards / total * 100 : 0;
 
       els.totalCount.textContent = total;

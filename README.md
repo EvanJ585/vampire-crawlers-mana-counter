@@ -1,13 +1,13 @@
-# Mana Curve Counter
+# Vampire Crawlers Card Counter
 
-A static, browser-only mana curve counter for Vampire Crawlers-style deck drafting.
+A static, browser-only card counter for Vampire Crawlers-style deck drafting.
 
 ## What it does
 
 - Starts with mana costs `0` through `5`.
 - Lets you add the next exact cost bucket from the side button.
 - Tracks card counts, total cards, target counts, and target percentages.
-- Tracks wild cards separately as flexible combo fillers with no mana number.
+- Tracks wild cards separately with no mana number and keeps them out of target ratios.
 - Autosaves to browser `localStorage`.
 - Supports undo and reset.
 - Uses a combo-ladder target model that heavily favors low-cost cards.
@@ -20,7 +20,7 @@ For visible costs `0..maxCost`, each cost uses:
 weight(cost) = (maxCost + 1 - cost) ** 2
 ```
 
-The app normalizes those weights into percentages, then rounds target card counts with largest-remainder rounding so numbered-card targets always add up exactly to the current numbered-card total. Wild cards count toward the deck total, but stay separate from numbered mana targets.
+The app uses those weights for the main curve, then adds a slow-growing high-cost floor so 5-cost cards begin showing up around the mid-20s and gain another target copy around 40 numbered cards. Target card counts use largest-remainder rounding so numbered-card targets always add up exactly to the current numbered-card total. Wild cards count toward the deck total, but stay separate from numbered mana targets.
 
 ## GitHub Pages
 
