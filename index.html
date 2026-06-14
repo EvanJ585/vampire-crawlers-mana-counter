@@ -3,10 +3,10 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="A gothic pixel-card counter for tracking Vampire Crawlers deck costs while drafting.">
+  <meta name="description" content="A gothic pixel-card mana ratio counter and weapon evolution reminder for Vampire Crawlers.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@500;600;700&display=swap" rel="stylesheet">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23120d18'/%3E%3Ccircle cx='32' cy='32' r='22' fill='%231f54b3' stroke='%23f3c956' stroke-width='6'/%3E%3Ctext x='32' y='43' text-anchor='middle' font-size='30' font-family='Georgia' font-weight='900' fill='%23f4ead3'%3E0%3C/text%3E%3C/svg%3E">
   <title>Vampire Crawlers Card Counter</title>
   <style>
@@ -36,7 +36,8 @@
       --ink: #09070c;
       --shadow: 0 16px 0 rgba(0, 0, 0, 0.34), 0 24px 42px rgba(0, 0, 0, 0.42);
       --pixel-shadow: 3px 3px 0 #09070c, -1px -1px 0 rgba(255, 255, 255, 0.14);
-      font-family: "Cormorant", Georgia, "Times New Roman", serif;
+      --font-pixel: "LanaPixel", "Lana Pixel", "Pixelify Sans", "Trebuchet MS", sans-serif;
+      font-family: var(--font-pixel);
     }
 
     * {
@@ -144,7 +145,7 @@
     h1 {
       margin: 0;
       color: var(--gold);
-      font-family: "Cormorant", Georgia, "Times New Roman", serif;
+      font-family: var(--font-pixel);
       font-size: clamp(2.35rem, 4.8vw, 5.2rem);
       line-height: 0.92;
       letter-spacing: 0;
@@ -157,6 +158,97 @@
       font-size: clamp(1rem, 2vw, 1.65rem);
       line-height: 1.1;
       text-shadow: 3px 3px 0 #09070c;
+    }
+
+    .subtitle-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .info-wrap {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 30;
+    }
+
+    .info-button {
+      display: inline-grid;
+      place-items: center;
+      width: 32px;
+      height: 32px;
+      border: 2px solid var(--blue-hi);
+      border-radius: 999px;
+      background:
+        radial-gradient(circle at 35% 25%, rgba(255, 255, 255, 0.34), transparent 18%),
+        linear-gradient(180deg, #273466, #10172f);
+      color: var(--blue-hi);
+      box-shadow: inset 0 0 0 3px #08060c, 2px 3px 0 #09070c;
+      font-size: 1.05rem;
+      font-weight: 900;
+      line-height: 1;
+      text-shadow: 2px 2px 0 #08060c;
+    }
+
+    .info-button:hover {
+      color: var(--paper);
+      filter: brightness(1.15);
+    }
+
+    .info-popover {
+      position: absolute;
+      top: calc(100% + 10px);
+      right: 0;
+      width: min(380px, calc(100vw - 48px));
+      padding: 14px 16px;
+      border: 2px solid var(--blue-hi);
+      background:
+        linear-gradient(180deg, rgba(47, 105, 215, 0.16), transparent 34%),
+        #171120;
+      box-shadow: inset 0 0 0 3px #08060c, 0 12px 0 rgba(0, 0, 0, 0.32), 0 20px 32px rgba(0, 0, 0, 0.5);
+      color: var(--paper);
+      font-size: 0.95rem;
+      font-weight: 700;
+      line-height: 1.22;
+      text-align: left;
+      text-transform: none;
+      text-shadow: 2px 2px 0 #08060c;
+      opacity: 0;
+      transform: translateY(-4px);
+      pointer-events: none;
+      transition: opacity 120ms ease, transform 120ms ease;
+    }
+
+    .title-block .info-popover {
+      right: auto;
+      left: 50%;
+      transform: translate(-50%, -4px);
+    }
+
+    .info-wrap:hover .info-popover,
+    .info-wrap:focus-within .info-popover,
+    .info-wrap.is-open .info-popover {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    .title-block .info-wrap:hover .info-popover,
+    .title-block .info-wrap:focus-within .info-popover,
+    .title-block .info-wrap.is-open .info-popover {
+      transform: translate(-50%, 0);
+    }
+
+    .info-popover p {
+      margin: 0;
+    }
+
+    .info-popover p + p {
+      margin-top: 10px;
     }
 
     .view-tabs {
@@ -236,7 +328,7 @@
 
     .total-count {
       color: var(--gold);
-      font-family: "Cormorant", Georgia, "Times New Roman", serif;
+      font-family: var(--font-pixel);
       font-size: 3.1rem;
       font-weight: 900;
       line-height: 0.9;
@@ -369,7 +461,7 @@
       display: grid;
       place-items: center;
       color: #f6fbff;
-      font-family: "Cormorant", Georgia, "Times New Roman", serif;
+      font-family: var(--font-pixel);
       font-size: 2.45rem;
       font-weight: 900;
       line-height: 1;
@@ -388,7 +480,7 @@
 
     .count {
       color: var(--paper);
-      font-family: "Cormorant", Georgia, "Times New Roman", serif;
+      font-family: var(--font-pixel);
       font-size: clamp(3.1rem, 7vw, 4.8rem);
       font-weight: 900;
       line-height: 0.95;
@@ -570,6 +662,19 @@
       text-shadow: 2px 2px 0 #08060c;
     }
 
+    .wildcard-header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .wildcard-header .info-button {
+      width: 28px;
+      height: 28px;
+      font-size: 0.9rem;
+    }
+
     .wildcard-orb {
       width: 90px;
       height: 90px;
@@ -596,7 +701,7 @@
 
     .wildcard-count {
       color: var(--gold);
-      font-family: "Cormorant", Georgia, "Times New Roman", serif;
+      font-family: var(--font-pixel);
       font-size: clamp(3.2rem, 7vw, 4.5rem);
       font-weight: 900;
       line-height: 0.95;
@@ -728,13 +833,6 @@
       font-size: 1.1rem;
     }
 
-    .target-note {
-      margin: 12px 0 0;
-      color: var(--muted);
-      line-height: 1.35;
-      font-size: 0.95rem;
-    }
-
     .evolution-view {
       display: grid;
       gap: 16px;
@@ -742,13 +840,12 @@
 
     .evolution-toolbar {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) auto auto auto;
+      grid-template-columns: minmax(0, 1fr) auto;
       gap: 12px;
       align-items: stretch;
     }
 
     .evolution-title-card,
-    .evolution-progress-card,
     .evolution-action {
       min-height: 74px;
       border: 2px solid var(--line);
@@ -756,33 +853,20 @@
       box-shadow: inset 0 0 0 3px #08060c, inset 0 0 0 5px #2b2030;
     }
 
-    .evolution-title-card,
-    .evolution-progress-card {
-      display: grid;
-      align-content: center;
+    .evolution-title-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
       padding: 12px 18px;
+      gap: 14px;
     }
 
     .evolution-title {
       color: var(--gold);
-      font-family: "Cormorant", Georgia, "Times New Roman", serif;
+      font-family: var(--font-pixel);
       font-size: clamp(1.65rem, 3vw, 2.4rem);
       font-weight: 900;
       line-height: 0.95;
-      text-shadow: var(--pixel-shadow);
-    }
-
-    .evolution-progress-card {
-      min-width: 170px;
-      justify-items: center;
-      text-align: center;
-    }
-
-    .evolution-progress-card strong {
-      color: var(--gold);
-      font-family: "Cormorant", Georgia, "Times New Roman", serif;
-      font-size: 2rem;
-      line-height: 1;
       text-shadow: var(--pixel-shadow);
     }
 
@@ -808,38 +892,24 @@
       box-shadow: inset 0 0 0 3px #08060c, inset 0 0 0 5px #1f2a4b;
     }
 
-    .evolution-action.clear {
-      color: #ff8a78;
-      border-color: #79343a;
-      box-shadow: inset 0 0 0 3px #08060c, inset 0 0 0 5px #421d27;
-    }
-
-    .evolution-action:disabled {
-      cursor: not-allowed;
-      opacity: 0.45;
-      transform: none;
-    }
-
     .evolution-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(390px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(460px, 1fr));
       gap: 12px;
     }
 
     .evolution-card {
       position: relative;
       display: grid;
-      grid-template-columns: auto minmax(0, 1fr);
       gap: 12px;
-      min-height: 132px;
-      padding: 14px;
+      min-height: 126px;
+      padding: 16px;
       border: 2px solid var(--gold-2);
       background:
         linear-gradient(180deg, rgba(255, 255, 255, 0.045), transparent 26%),
         repeating-linear-gradient(0deg, transparent 0 9px, rgba(255, 255, 255, 0.018) 9px 10px),
         linear-gradient(180deg, #241b31, #17101f);
       box-shadow: inset 0 0 0 3px #08060c, inset 0 0 0 5px #3a2a14, 0 9px 0 rgba(0, 0, 0, 0.28);
-      cursor: pointer;
       overflow: hidden;
     }
 
@@ -864,57 +934,8 @@
       border-right: 3px solid var(--gold);
     }
 
-    .evolution-card.is-complete {
-      border-color: #94d854;
-      background:
-        linear-gradient(180deg, rgba(134, 216, 78, 0.12), transparent 30%),
-        repeating-linear-gradient(0deg, transparent 0 9px, rgba(255, 255, 255, 0.018) 9px 10px),
-        linear-gradient(180deg, #1e2f20, #141d16);
-    }
-
     .evolution-card:hover {
       filter: brightness(1.08);
-      transform: translateY(-1px);
-    }
-
-    .evolution-check {
-      position: relative;
-      align-self: start;
-      display: grid;
-      place-items: center;
-      width: 52px;
-      height: 52px;
-      margin-top: 18px;
-      border: 2px solid #3a2f36;
-      background: linear-gradient(180deg, #251a2c, #120d18);
-      box-shadow: inset 0 0 0 3px #08060c, 3px 4px 0 #09070c;
-      color: transparent;
-      font-size: 2rem;
-      font-weight: 900;
-      line-height: 1;
-    }
-
-    .evolution-check svg {
-      width: 30px;
-      height: 30px;
-      opacity: 0;
-      filter: drop-shadow(2px 2px 0 #08060c);
-    }
-
-    .evolution-card.is-complete .evolution-check {
-      color: #a6f36e;
-      border-color: #436b33;
-      background: linear-gradient(180deg, #274421, #142515);
-    }
-
-    .evolution-card.is-complete .evolution-check svg {
-      opacity: 1;
-    }
-
-    .evolution-checkbox {
-      position: absolute;
-      opacity: 0;
-      pointer-events: none;
     }
 
     .evolution-body {
@@ -931,17 +952,83 @@
       text-shadow: 2px 2px 0 #08060c;
     }
 
-    .recipe-art {
-      display: block;
-      width: 100%;
-      max-height: 88px;
+    .recipe-line {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .recipe-item {
+      display: inline-grid;
+      grid-template-columns: 40px minmax(0, auto);
+      align-items: center;
+      gap: 7px;
+      min-height: 50px;
+      max-width: 100%;
+      padding: 5px 8px;
+      border: 2px solid rgba(243, 201, 86, 0.34);
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.07), transparent),
+        #242744;
+      box-shadow: inset 0 0 0 2px #08060c;
+    }
+
+    .recipe-item.result {
+      border-color: rgba(243, 201, 86, 0.78);
+      background:
+        linear-gradient(180deg, rgba(47, 105, 215, 0.22), transparent),
+        #1b2447;
+    }
+
+    .recipe-icon {
+      width: 40px;
+      height: 40px;
       object-fit: contain;
-      object-position: left center;
       image-rendering: pixelated;
       image-rendering: crisp-edges;
-      border: 2px solid rgba(243, 201, 86, 0.18);
-      background: #4b4f73;
-      box-shadow: inset 0 0 0 2px #08060c;
+    }
+
+    .recipe-label {
+      color: var(--paper);
+      font-size: 0.9rem;
+      font-weight: 900;
+      line-height: 1;
+      overflow-wrap: anywhere;
+      text-shadow: 2px 2px 0 #08060c;
+    }
+
+    .recipe-item.result .recipe-label {
+      color: var(--gold);
+    }
+
+    .recipe-operator {
+      color: var(--paper);
+      font-size: 1.55rem;
+      font-weight: 900;
+      line-height: 1;
+      text-shadow: 2px 2px 0 #08060c;
+    }
+
+    .evolution-cost {
+      display: inline-grid;
+      place-items: center;
+      min-width: 46px;
+      height: 46px;
+      padding: 0 6px;
+      border: 3px solid #f0b64d;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 32% 25%, #bce5ff 0 10%, transparent 11%),
+        radial-gradient(circle at 50% 58%, #1f54b3 0 40%, #103279 66%, #081c46 100%);
+      color: #f6fbff;
+      font-family: var(--font-pixel);
+      font-size: 1.4rem;
+      font-weight: 900;
+      line-height: 1;
+      box-shadow: 0 0 0 3px #5a3b17, 3px 4px 0 #08060c;
+      text-shadow: 2px 2px 0 #0b1b42;
     }
 
     .evolution-note {
@@ -982,11 +1069,11 @@
       }
 
       .evolution-toolbar {
-        grid-template-columns: minmax(0, 1fr) auto auto;
+        grid-template-columns: minmax(0, 1fr) auto;
       }
 
       .evolution-title-card {
-        grid-column: 1 / -1;
+        grid-column: auto;
       }
 
       .side-panel {
@@ -1080,12 +1167,7 @@
       }
 
       .evolution-toolbar {
-        grid-template-columns: 1fr 1fr;
-      }
-
-      .evolution-title-card,
-      .evolution-progress-card {
-        grid-column: 1 / -1;
+        grid-template-columns: 1fr;
       }
 
       .evolution-action {
@@ -1096,6 +1178,16 @@
 
       .evolution-grid {
         grid-template-columns: 1fr;
+      }
+
+      .recipe-item {
+        grid-template-columns: 36px minmax(0, 1fr);
+        flex: 1 1 150px;
+      }
+
+      .recipe-icon {
+        width: 36px;
+        height: 36px;
       }
 
       .curve-panel,
@@ -1155,7 +1247,16 @@
       <div class="topbar">
         <div class="title-block">
           <h1 id="page-title">Vampire Crawlers Card Counter</h1>
-          <p class="subtitle">Track deck costs while you draft</p>
+          <div class="subtitle-row">
+            <p class="subtitle">Mana cost ratio counter and weapon evolutions reminder</p>
+            <span class="info-wrap">
+              <button class="info-button" type="button" aria-expanded="false" aria-label="How the mana ratio counter works">i</button>
+              <span class="info-popover" role="tooltip">
+                <p>Vampire Crawlers cards use mana costs. Playing costs in order, like 0, 1, 2, then 3, keeps the combo chain moving and makes follow-up cards stronger.</p>
+                <p>This counter keeps the deck low-cost heavy so you are more likely to draw the next number you need for those chains.</p>
+              </span>
+            </span>
+          </div>
         </div>
       </div>
 
@@ -1213,7 +1314,16 @@
             </button>
 
             <section class="wildcard-card" aria-labelledby="wildcard-title">
-              <div class="wildcard-title" id="wildcard-title">Wild Cards</div>
+              <div class="wildcard-header">
+                <div class="wildcard-title" id="wildcard-title">Wild Cards</div>
+                <span class="info-wrap">
+                  <button class="info-button" type="button" aria-expanded="false" aria-label="How wild cards work">i</button>
+                  <span class="info-popover" role="tooltip">
+                    <p>Wild cards have no mana number. They can be used at any point to start a combo or fill a missing step so the sequence can continue.</p>
+                <p>They have no numbered cost, so you do not need to chase a target count for them. Run as many as feels good.</p>
+                  </span>
+                </span>
+              </div>
               <div class="wildcard-orb" aria-hidden="true">
                 <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="square" stroke-linejoin="miter">
                   <path d="M32 7l6 17 18-6-9 16 14 11-18 2 1 18-12-13-12 13 1-18-18-2 14-11-9-16 18 6z"></path>
@@ -1252,7 +1362,6 @@
               Target Ratio
             </div>
             <div class="target-grid" id="target-grid" aria-label="Calculated target ratios"></div>
-            <p class="target-note">High cards raise lower-cost targets. Wild cards stay separate.</p>
           </div>
         </section>
       </div>
@@ -1261,16 +1370,18 @@
         <div class="evolution-toolbar">
           <div class="evolution-title-card">
             <div class="evolution-title">Weapon Evolutions</div>
-          </div>
-          <div class="evolution-progress-card">
-            <span class="label">Checked</span>
-            <strong id="evolution-progress">0 / 17</strong>
+            <span class="info-wrap">
+              <button class="info-button" type="button" aria-expanded="false" aria-label="How weapon evolutions work">i</button>
+              <span class="info-popover" role="tooltip">
+                <p>This tab is a reminder for weapon evolutions: the first card plus its matching support card can combine into the stronger card shown after the equals sign.</p>
+                <p>The blue orb at the end is the mana cost of the evolved card, so you can check whether the upgraded card still fits your deck curve.</p>
+              </span>
+            </span>
           </div>
           <button class="evolution-action back" type="button" id="back-to-counter-button">Back to Counter</button>
-          <button class="evolution-action clear" type="button" id="clear-evolutions-button">Clear</button>
         </div>
 
-        <div class="evolution-grid" id="evolution-grid" aria-label="Weapon evolution checklist"></div>
+        <div class="evolution-grid" id="evolution-grid" aria-label="Weapon evolution reminder"></div>
       </section>
     </section>
   </main>
@@ -1320,7 +1431,6 @@
       costs: [...DEFAULT_COSTS],
       counts: Object.fromEntries(DEFAULT_COSTS.map((cost) => [cost, 0])),
       wildcards: 0,
-      evolutions: Object.fromEntries(EVOLUTIONS.map((evolution) => [evolution.id, false])),
       activeView: "counter",
       history: []
     };
@@ -1345,9 +1455,8 @@
       saveTitle: document.querySelector("#save-title"),
       saveDetail: document.querySelector("#save-detail"),
       evolutionGrid: document.querySelector("#evolution-grid"),
-      evolutionProgress: document.querySelector("#evolution-progress"),
       backToCounterButton: document.querySelector("#back-to-counter-button"),
-      clearEvolutionsButton: document.querySelector("#clear-evolutions-button"),
+      infoButtons: document.querySelectorAll(".info-button"),
       template: document.querySelector("#cost-card-template")
     };
 
@@ -1386,18 +1495,11 @@
       state.wildcards = Math.max(0, Number(snapshot.wildcards || 0));
     }
 
-    function normalizeEvolutions(evolutions) {
-      return Object.fromEntries(
-        EVOLUTIONS.map((evolution) => [evolution.id, Boolean(evolutions?.[evolution.id])])
-      );
-    }
-
     function loadState() {
       try {
         const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null");
         if (!saved || typeof saved !== "object") return;
         restoreSnapshot(saved);
-        state.evolutions = normalizeEvolutions(saved.evolutions);
         state.activeView = saved.activeView === "evolutions" ? "evolutions" : "counter";
         lastSavedAt = saved.savedAt ? new Date(saved.savedAt) : null;
       } catch {
@@ -1410,7 +1512,6 @@
         costs: state.costs,
         counts: state.counts,
         wildcards: state.wildcards,
-        evolutions: state.evolutions,
         activeView: state.activeView,
         savedAt: new Date().toISOString()
       };
@@ -1434,10 +1535,6 @@
       return `${Math.floor(seconds / 60)}m ago`;
     }
 
-    function completedEvolutionCount() {
-      return EVOLUTIONS.filter((evolution) => state.evolutions[evolution.id]).length;
-    }
-
     function renderViewState() {
       const showingEvolutions = state.activeView === "evolutions";
       els.counterView.hidden = showingEvolutions;
@@ -1454,48 +1551,65 @@
       if (shouldSave) saveState();
     }
 
-    function createCheckIcon() {
-      const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-      const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-      svg.setAttribute("viewBox", "0 0 24 24");
-      svg.setAttribute("fill", "none");
-      svg.setAttribute("stroke", "currentColor");
-      svg.setAttribute("stroke-width", "3");
-      svg.setAttribute("stroke-linecap", "square");
-      svg.setAttribute("stroke-linejoin", "miter");
-      svg.setAttribute("aria-hidden", "true");
-      path.setAttribute("d", "M4 12.5l5 5L20 6");
-      svg.append(path);
-      return svg;
+    function slugifyName(name) {
+      return name
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-|-$/g, "");
+    }
+
+    function createOperator(text) {
+      const operator = document.createElement("span");
+      operator.className = "recipe-operator";
+      operator.textContent = text;
+      return operator;
+    }
+
+    function createRecipeItem(name, className = "") {
+      const item = document.createElement("span");
+      const icon = document.createElement("img");
+      const label = document.createElement("span");
+
+      item.className = `recipe-item${className ? ` ${className}` : ""}`;
+      icon.className = "recipe-icon";
+      icon.src = `assets/items/${slugifyName(name)}.png`;
+      icon.alt = "";
+      icon.loading = "lazy";
+      label.className = "recipe-label";
+      label.textContent = name;
+      item.append(icon, label);
+      return item;
+    }
+
+    function createCostBadge(cost) {
+      const badge = document.createElement("span");
+      badge.className = "evolution-cost";
+      badge.textContent = cost;
+      badge.setAttribute("aria-label", `${cost} mana`);
+      return badge;
     }
 
     function renderEvolutions() {
       els.evolutionGrid.innerHTML = "";
 
       EVOLUTIONS.forEach((evolution) => {
-        const complete = Boolean(state.evolutions[evolution.id]);
-        const card = document.createElement("label");
-        const checkbox = document.createElement("input");
-        const check = document.createElement("span");
+        const card = document.createElement("article");
         const body = document.createElement("span");
         const name = document.createElement("span");
-        const art = document.createElement("img");
+        const line = document.createElement("span");
 
-        card.className = `evolution-card${complete ? " is-complete" : ""}`;
-        checkbox.className = "evolution-checkbox";
-        checkbox.type = "checkbox";
-        checkbox.checked = complete;
-        checkbox.setAttribute("aria-label", `${complete ? "Uncheck" : "Check"} ${evolution.name}`);
-        check.className = "evolution-check";
-        check.append(createCheckIcon());
+        card.className = "evolution-card";
         body.className = "evolution-body";
         name.className = "evolution-name";
         name.textContent = evolution.name;
-        art.className = "recipe-art";
-        art.src = `assets/evolutions/${evolution.id}.png`;
-        art.alt = `${evolution.parts.join(" plus ")} equals ${evolution.result}, cost ${evolution.cost}`;
-        art.loading = "lazy";
-        body.append(name, art);
+        line.className = "recipe-line";
+
+        evolution.parts.forEach((part, index) => {
+          if (index > 0) line.append(createOperator("+"));
+          line.append(createRecipeItem(part));
+        });
+        line.append(createOperator("="), createRecipeItem(evolution.result, "result"), createCostBadge(evolution.cost));
+        body.append(name, line);
 
         if (evolution.note) {
           const note = document.createElement("span");
@@ -1504,26 +1618,9 @@
           body.append(note);
         }
 
-        checkbox.addEventListener("change", () => {
-          state.evolutions[evolution.id] = checkbox.checked;
-          renderEvolutions();
-          saveState();
-        });
-
-        card.append(checkbox, check, body);
+        card.append(body);
         els.evolutionGrid.append(card);
       });
-
-      const completed = completedEvolutionCount();
-      els.evolutionProgress.textContent = `${completed} / ${EVOLUTIONS.length}`;
-      els.clearEvolutionsButton.disabled = completed === 0;
-    }
-
-    function clearEvolutions() {
-      if (completedEvolutionCount() === 0) return;
-      state.evolutions = normalizeEvolutions();
-      renderEvolutions();
-      saveState();
     }
 
     function totalCards() {
@@ -1720,6 +1817,7 @@
         const share = total ? count / total * 100 : 0;
         const node = els.template.content.firstElementChild.cloneNode(true);
 
+        node.dataset.cost = String(cost);
         node.querySelector("[data-cost-label]").textContent = costLabel(cost);
         node.querySelector("[data-count]").textContent = count;
         node.querySelector("[data-share]").textContent = formatPercent(share);
@@ -1826,12 +1924,36 @@
     els.counterTab.addEventListener("click", () => setActiveView("counter"));
     els.evolutionsTab.addEventListener("click", () => setActiveView("evolutions"));
     els.backToCounterButton.addEventListener("click", () => setActiveView("counter"));
-    els.clearEvolutionsButton.addEventListener("click", clearEvolutions);
     els.addCostButton.addEventListener("click", addNextCost);
     els.wildcardMinus.addEventListener("click", decrementWildcard);
     els.wildcardPlus.addEventListener("click", incrementWildcard);
     els.undoButton.addEventListener("click", undo);
     els.resetButton.addEventListener("click", resetCounts);
+
+    function closeInfoPopovers(except = null) {
+      els.infoButtons.forEach((button) => {
+        const wrap = button.closest(".info-wrap");
+        if (!wrap || wrap === except) return;
+        wrap.classList.remove("is-open");
+        button.setAttribute("aria-expanded", "false");
+      });
+    }
+
+    els.infoButtons.forEach((button) => {
+      button.addEventListener("click", (event) => {
+        event.stopPropagation();
+        const wrap = button.closest(".info-wrap");
+        const shouldOpen = !wrap.classList.contains("is-open");
+        closeInfoPopovers(wrap);
+        wrap.classList.toggle("is-open", shouldOpen);
+        button.setAttribute("aria-expanded", String(shouldOpen));
+      });
+    });
+
+    document.addEventListener("click", () => closeInfoPopovers());
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") closeInfoPopovers();
+    });
 
     window.addEventListener("storage", (event) => {
       if (event.key !== STORAGE_KEY) return;
