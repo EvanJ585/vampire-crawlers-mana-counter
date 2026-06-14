@@ -1264,7 +1264,8 @@
               <button class="info-button" type="button" aria-expanded="false" aria-label="How the mana ratio counter works">i</button>
               <span class="info-popover" role="tooltip">
                 <p>Vampire Crawlers cards use mana costs. Playing costs in order, like 0, 1, 2, then 3, keeps the combo chain moving and makes follow-up cards stronger.</p>
-                <p>This counter keeps the deck low-cost heavy so you are more likely to draw the next number you need for those chains.</p>
+                <p>This counter uses a default 5-card hand to keep the deck full of playable sequences. Bigger hands only make those chains easier to find.</p>
+                <p>Wild cards and 5-cost cards are capped in the target because they are rare, so the ratio stays useful during a real run.</p>
               </span>
             </span>
           </div>
@@ -1331,7 +1332,7 @@
                   <button class="info-button" type="button" aria-expanded="false" aria-label="How wild cards work">i</button>
                   <span class="info-popover" role="tooltip">
                     <p>Wild cards have no mana number. They can be used at any point to start a combo or fill a missing step so the sequence can continue.</p>
-                <p>They have no numbered cost, so you do not need to chase a target count for them. Run as many as feels good.</p>
+                    <p>The target is soft because wild cards are rare. Add them when you find them, but the deck should still work without many.</p>
                   </span>
                 </span>
               </div>
@@ -1418,6 +1419,11 @@
     const STORAGE_KEY = "vc-mana-counter-v1";
     const DEFAULT_COSTS = [0, 1, 2, 3, 4, 5];
     const HISTORY_LIMIT = 60;
+    const LOW_COST_TARGET_WEIGHTS = { 0: 26, 1: 24, 2: 22, 3: 18, 4: 10 };
+    const WILDCARD_TARGET_RATE = 0.12;
+    const WILDCARD_TARGET_CAP = 6;
+    const FIRST_FIVE_COST_TARGET_AT = 24;
+    const SECOND_FIVE_COST_TARGET_AT = 40;
     const EVOLUTIONS = [
       { id: "bloody-tear", name: "Bloody Tear", parts: ["Whip", "Hollow Heart"], result: "Bloody Tear", cost: "2" },
       { id: "thunder-loop", name: "Thunder Loop", parts: ["Lightning Ring", "Duplicator"], result: "Thunder Loop", cost: "4" },
@@ -1863,29 +1869,29 @@
       return weighted / total;
     }
 
-    function targetWeights() {
-      const max = maxVisibleCost();
-      return Object.fromEntries(state.costs.map((cost) => [cost, (max + 1 - cost) ** 2]));
-    }
-
     function zeroTargets() {
       return Object.fromEntries(state.costs.map((cost) => [cost, 0]));
     }
 
-    function minimumTargetForCost(cost, total) {
-      if (cost < 5 || total <= 0) return 0;
+    function wildcardBaselineTarget(total) {
+      if (!total) return 0;
+      return Math.min(WILDCARD_TARGET_CAP, Math.round(total * WILDCARD_TARGET_RATE));
+    }
 
-      const firstCopyAt = 24 + (cost - 5) * 16;
-      return total >= firstCopyAt ? Math.floor((total - firstCopyAt) / 16) + 1 : 0;
+    function fiveCostBaselineTarget(total) {
+      if (total >= SECOND_FIVE_COST_TARGET_AT) return 2;
+      if (total >= FIRST_FIVE_COST_TARGET_AT) return 1;
+      return 0;
     }
 
     function roundWeightedCounts(total, weights) {
-      const weightTotal = state.costs.reduce((sum, cost) => sum + Number(weights[cost] || 0), 0);
+      const costs = Object.keys(weights).map(Number);
+      const weightTotal = costs.reduce((sum, cost) => sum + Number(weights[cost] || 0), 0);
       if (!total || !weightTotal) {
-        return Object.fromEntries(state.costs.map((cost) => [cost, 0]));
+        return Object.fromEntries(costs.map((cost) => [cost, 0]));
       }
 
-      const rows = state.costs.map((cost) => {
+      const rows = costs.map((cost) => {
         const exact = total * Number(weights[cost] || 0) / weightTotal;
         return {
           cost,
@@ -1908,23 +1914,33 @@
       return Object.fromEntries(rows.map((row) => [row.cost, row.base]));
     }
 
-    function baselineTargetCounts(total) {
-      const weights = targetWeights();
-      if (!total) return zeroTargets();
+    function baselineTargets(total) {
+      const targets = zeroTargets();
+      const wildcardTarget = wildcardBaselineTarget(total);
 
-      const minimums = Object.fromEntries(
-        state.costs.map((cost) => [cost, minimumTargetForCost(cost, total)])
-      );
-      const minimumTotal = state.costs.reduce((sum, cost) => sum + minimums[cost], 0);
-
-      if (minimumTotal >= total) {
-        return roundWeightedCounts(total, minimums);
+      if (!total) {
+        return { costs: targets, wildcards: wildcardTarget };
       }
 
-      const rounded = roundWeightedCounts(total - minimumTotal, weights);
-      return Object.fromEntries(
-        state.costs.map((cost) => [cost, minimums[cost] + (rounded[cost] || 0)])
+      const fiveTarget = fiveCostBaselineTarget(total);
+      if (state.costs.includes(5)) {
+        targets[5] = fiveTarget;
+      }
+
+      const reserved = Math.min(total, wildcardTarget + fiveTarget);
+      const remaining = Math.max(0, total - reserved);
+      const lowWeights = Object.fromEntries(
+        state.costs
+          .filter((cost) => cost >= 0 && cost <= 4)
+          .map((cost) => [cost, LOW_COST_TARGET_WEIGHTS[cost]])
       );
+      const lowTargets = roundWeightedCounts(remaining, lowWeights);
+
+      Object.entries(lowTargets).forEach(([cost, count]) => {
+        targets[Number(cost)] = count;
+      });
+
+      return { costs: targets, wildcards: wildcardTarget };
     }
 
     function supportTargetCounts() {
@@ -1942,18 +1958,28 @@
     }
 
     function targetCounts(total) {
-      const baseline = baselineTargetCounts(total);
+      const baseline = baselineTargets(total);
       const support = supportTargetCounts();
-      return Object.fromEntries(
-        state.costs.map((cost) => [cost, Math.max(baseline[cost] || 0, support[cost] || 0)])
+      const costs = Object.fromEntries(
+        state.costs.map((cost) => [cost, Math.max(baseline.costs[cost] || 0, support[cost] || 0)])
       );
+
+      return {
+        costs,
+        wildcards: baseline.wildcards
+      };
     }
 
     function targetPercentages(targets) {
-      const targetTotal = state.costs.reduce((sum, cost) => sum + (targets[cost] || 0), 0);
-      return Object.fromEntries(
-        state.costs.map((cost) => [cost, targetTotal ? (targets[cost] || 0) / targetTotal * 100 : 0])
+      const targetTotal = state.costs.reduce((sum, cost) => sum + (targets.costs[cost] || 0), targets.wildcards || 0);
+      const costs = Object.fromEntries(
+        state.costs.map((cost) => [cost, targetTotal ? (targets.costs[cost] || 0) / targetTotal * 100 : 0])
       );
+
+      return {
+        costs,
+        wildcards: targetTotal ? (targets.wildcards || 0) / targetTotal * 100 : 0
+      };
     }
 
     function mutate(mutator) {
@@ -2109,29 +2135,48 @@
 
         chip.className = "target-chip";
         label.textContent = `${costLabel(cost)} cost`;
-        value.textContent = `${formatPercent(percentages[cost])} / ${targets[cost] || 0}`;
+        value.textContent = `${formatPercent(percentages.costs[cost])} / ${targets.costs[cost] || 0}`;
 
         chip.append(label, value);
         els.targetGrid.append(chip);
       });
+
+      const wildcardChip = document.createElement("div");
+      const wildcardLabel = document.createElement("strong");
+      const wildcardValue = document.createElement("span");
+
+      wildcardChip.className = "target-chip";
+      wildcardLabel.textContent = "Wild";
+      wildcardValue.textContent = `${formatPercent(percentages.wildcards)} / ${targets.wildcards || 0}`;
+
+      wildcardChip.append(wildcardLabel, wildcardValue);
+      els.targetGrid.append(wildcardChip);
     }
 
     function render() {
       const total = totalCards();
-      const numberedTotal = numberedCards();
       const wildcards = Number(state.wildcards || 0);
-      const targets = targetCounts(numberedTotal);
+      const targets = targetCounts(total);
       const percentages = targetPercentages(targets);
       const wildcardShare = total ? wildcards / total * 100 : 0;
+      const wildcardDiff = (targets.wildcards || 0) - wildcards;
 
       els.totalCount.textContent = total;
       els.wildcardCount.textContent = wildcards;
-      els.wildcardShare.textContent = `${formatPercent(wildcardShare)} of deck`;
+      if (total === 0) {
+        els.wildcardShare.textContent = "0% of deck | soft target 0";
+      } else if (wildcardDiff > 0) {
+        els.wildcardShare.textContent = `${formatPercent(wildcardShare)} of deck | soft target ${targets.wildcards} | add ${wildcardDiff} if found`;
+      } else if (wildcardDiff < 0) {
+        els.wildcardShare.textContent = `${formatPercent(wildcardShare)} of deck | soft target ${targets.wildcards} | above target`;
+      } else {
+        els.wildcardShare.textContent = `${formatPercent(wildcardShare)} of deck | soft target ${targets.wildcards} | on target`;
+      }
       els.addCostLabel.textContent = `Add ${maxVisibleCost() + 1}`;
       els.undoButton.disabled = state.history.length === 0;
       els.resetButton.disabled = total === 0;
 
-      renderCards(total, targets);
+      renderCards(total, targets.costs);
       renderBars(total);
       renderTargets(percentages, targets);
       renderEvolutions();
