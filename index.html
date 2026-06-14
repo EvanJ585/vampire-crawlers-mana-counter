@@ -1139,7 +1139,7 @@
       return Object.fromEntries(rows.map((row) => [row.cost, row.base]));
     }
 
-    function targetCounts(total) {
+    function baselineTargetCounts(total) {
       const weights = targetWeights();
       if (!total) return zeroTargets();
 
@@ -1158,9 +1158,32 @@
       );
     }
 
-    function targetPercentages(targets, total) {
+    function supportTargetCounts() {
+      const targets = Object.fromEntries(
+        state.costs.map((cost) => [cost, Number(state.counts[cost] || 0)])
+      );
+
+      for (let i = state.costs.length - 1; i > 0; i -= 1) {
+        const cost = state.costs[i];
+        const lowerCost = state.costs[i - 1];
+        targets[lowerCost] = Math.max(targets[lowerCost] || 0, targets[cost] || 0);
+      }
+
+      return targets;
+    }
+
+    function targetCounts(total) {
+      const baseline = baselineTargetCounts(total);
+      const support = supportTargetCounts();
       return Object.fromEntries(
-        state.costs.map((cost) => [cost, total ? (targets[cost] || 0) / total * 100 : 0])
+        state.costs.map((cost) => [cost, Math.max(baseline[cost] || 0, support[cost] || 0)])
+      );
+    }
+
+    function targetPercentages(targets) {
+      const targetTotal = state.costs.reduce((sum, cost) => sum + (targets[cost] || 0), 0);
+      return Object.fromEntries(
+        state.costs.map((cost) => [cost, targetTotal ? (targets[cost] || 0) / targetTotal * 100 : 0])
       );
     }
 
@@ -1328,7 +1351,7 @@
       const numberedTotal = numberedCards();
       const wildcards = Number(state.wildcards || 0);
       const targets = targetCounts(numberedTotal);
-      const percentages = targetPercentages(targets, numberedTotal);
+      const percentages = targetPercentages(targets);
       const wildcardShare = total ? wildcards / total * 100 : 0;
 
       els.totalCount.textContent = total;

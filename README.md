@@ -10,7 +10,7 @@ A static, browser-only card counter for Vampire Crawlers-style deck drafting.
 - Tracks wild cards separately with no mana number and keeps them out of target ratios.
 - Autosaves to browser `localStorage`.
 - Supports undo and reset.
-- Uses a combo-ladder target model that heavily favors low-cost cards.
+- Uses a combo-ladder target model that favors low-cost cards and reacts to high-cost cards already in the deck.
 
 ## Target model
 
@@ -20,7 +20,7 @@ For visible costs `0..maxCost`, each cost uses:
 weight(cost) = (maxCost + 1 - cost) ** 2
 ```
 
-The app uses those weights for the main curve, then adds a slow-growing high-cost floor so 5-cost cards begin showing up around the mid-20s and gain another target copy around 40 numbered cards. Target card counts use largest-remainder rounding so numbered-card targets always add up exactly to the current numbered-card total. Wild cards count toward the deck total, but stay separate from numbered mana targets.
+The app uses those weights for the main curve, then adds a slow-growing high-cost floor so 5-cost cards begin showing up around the mid-20s and gain another target copy around 40 numbered cards. After that, a support-ladder pass raises lower-cost targets when the deck already has higher-cost cards. For example, 4 copies of a `2`-cost card push the `1`-cost target to at least 4. Wild cards count toward the deck total, but stay separate from numbered mana targets.
 
 ## GitHub Pages
 
