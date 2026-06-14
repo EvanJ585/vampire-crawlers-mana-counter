@@ -156,6 +156,45 @@
       text-shadow: 3px 3px 0 #09070c;
     }
 
+    .view-tabs {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin: 0 0 16px;
+    }
+
+    .view-tab {
+      min-height: 58px;
+      border: 2px solid var(--line);
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.035), transparent),
+        var(--panel);
+      box-shadow: inset 0 0 0 3px #08060c, inset 0 0 0 5px #2b2030;
+      color: var(--purple);
+      font-size: 1.08rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      text-shadow: 2px 2px 0 #08060c;
+    }
+
+    .view-tab:hover {
+      color: var(--paper);
+      transform: translateY(-1px);
+    }
+
+    .view-tab.is-active {
+      border-color: var(--gold-2);
+      color: var(--gold);
+      background:
+        linear-gradient(180deg, rgba(47, 105, 215, 0.18), transparent),
+        var(--panel-2);
+      box-shadow: inset 0 0 0 3px #08060c, inset 0 0 0 5px #3a2a14;
+    }
+
+    .view-panel[hidden] {
+      display: none;
+    }
+
     .hud {
       display: grid;
       grid-template-columns: minmax(180px, 250px) minmax(240px, 1fr) auto auto;
@@ -693,6 +732,270 @@
       font-size: 0.95rem;
     }
 
+    .evolution-view {
+      display: grid;
+      gap: 16px;
+    }
+
+    .evolution-toolbar {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto auto auto;
+      gap: 12px;
+      align-items: stretch;
+    }
+
+    .evolution-title-card,
+    .evolution-progress-card,
+    .evolution-action {
+      min-height: 74px;
+      border: 2px solid var(--line);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), transparent), var(--panel);
+      box-shadow: inset 0 0 0 3px #08060c, inset 0 0 0 5px #2b2030;
+    }
+
+    .evolution-title-card,
+    .evolution-progress-card {
+      display: grid;
+      align-content: center;
+      padding: 12px 18px;
+    }
+
+    .evolution-title {
+      color: var(--gold);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(1.65rem, 3vw, 2.4rem);
+      font-weight: 900;
+      line-height: 0.95;
+      text-shadow: var(--pixel-shadow);
+    }
+
+    .evolution-progress-card {
+      min-width: 170px;
+      justify-items: center;
+      text-align: center;
+    }
+
+    .evolution-progress-card strong {
+      color: var(--gold);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 2rem;
+      line-height: 1;
+      text-shadow: var(--pixel-shadow);
+    }
+
+    .evolution-action {
+      display: inline-grid;
+      align-items: center;
+      justify-content: center;
+      min-width: 150px;
+      padding: 12px 18px;
+      color: var(--purple);
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .evolution-action:hover {
+      color: var(--paper);
+      transform: translateY(-1px);
+    }
+
+    .evolution-action.back {
+      color: var(--blue-hi);
+      border-color: #344a75;
+      box-shadow: inset 0 0 0 3px #08060c, inset 0 0 0 5px #1f2a4b;
+    }
+
+    .evolution-action.clear {
+      color: #ff8a78;
+      border-color: #79343a;
+      box-shadow: inset 0 0 0 3px #08060c, inset 0 0 0 5px #421d27;
+    }
+
+    .evolution-action:disabled {
+      cursor: not-allowed;
+      opacity: 0.45;
+      transform: none;
+    }
+
+    .evolution-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(390px, 1fr));
+      gap: 12px;
+    }
+
+    .evolution-card {
+      position: relative;
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: 12px;
+      min-height: 132px;
+      padding: 14px;
+      border: 2px solid var(--gold-2);
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.045), transparent 26%),
+        repeating-linear-gradient(0deg, transparent 0 9px, rgba(255, 255, 255, 0.018) 9px 10px),
+        linear-gradient(180deg, #241b31, #17101f);
+      box-shadow: inset 0 0 0 3px #08060c, inset 0 0 0 5px #3a2a14, 0 9px 0 rgba(0, 0, 0, 0.28);
+      cursor: pointer;
+      overflow: hidden;
+    }
+
+    .evolution-card::before,
+    .evolution-card::after {
+      content: "";
+      position: absolute;
+      top: 10px;
+      width: 14px;
+      height: 14px;
+      border-top: 3px solid var(--gold);
+      opacity: 0.72;
+    }
+
+    .evolution-card::before {
+      left: 10px;
+      border-left: 3px solid var(--gold);
+    }
+
+    .evolution-card::after {
+      right: 10px;
+      border-right: 3px solid var(--gold);
+    }
+
+    .evolution-card.is-complete {
+      border-color: #94d854;
+      background:
+        linear-gradient(180deg, rgba(134, 216, 78, 0.12), transparent 30%),
+        repeating-linear-gradient(0deg, transparent 0 9px, rgba(255, 255, 255, 0.018) 9px 10px),
+        linear-gradient(180deg, #1e2f20, #141d16);
+    }
+
+    .evolution-card:hover {
+      filter: brightness(1.08);
+      transform: translateY(-1px);
+    }
+
+    .evolution-check {
+      position: relative;
+      align-self: start;
+      display: grid;
+      place-items: center;
+      width: 52px;
+      height: 52px;
+      margin-top: 18px;
+      border: 2px solid #3a2f36;
+      background: linear-gradient(180deg, #251a2c, #120d18);
+      box-shadow: inset 0 0 0 3px #08060c, 3px 4px 0 #09070c;
+      color: transparent;
+      font-size: 2rem;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .evolution-check svg {
+      width: 30px;
+      height: 30px;
+      opacity: 0;
+      filter: drop-shadow(2px 2px 0 #08060c);
+    }
+
+    .evolution-card.is-complete .evolution-check {
+      color: #a6f36e;
+      border-color: #436b33;
+      background: linear-gradient(180deg, #274421, #142515);
+    }
+
+    .evolution-card.is-complete .evolution-check svg {
+      opacity: 1;
+    }
+
+    .evolution-checkbox {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .evolution-body {
+      min-width: 0;
+      display: grid;
+      gap: 10px;
+    }
+
+    .evolution-name {
+      color: var(--gold);
+      font-size: 1.08rem;
+      font-weight: 900;
+      line-height: 1.05;
+      text-shadow: 2px 2px 0 #08060c;
+    }
+
+    .recipe-line {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .recipe-token {
+      display: inline-flex;
+      align-items: center;
+      min-height: 34px;
+      max-width: 100%;
+      padding: 7px 10px;
+      border: 2px solid rgba(243, 201, 86, 0.32);
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.06), transparent),
+        #1e1728;
+      color: var(--paper);
+      font-size: 0.9rem;
+      font-weight: 900;
+      line-height: 1.05;
+      box-shadow: inset 0 0 0 2px #08060c;
+    }
+
+    .recipe-token.result {
+      color: var(--gold);
+      border-color: rgba(243, 201, 86, 0.65);
+      background:
+        linear-gradient(180deg, rgba(47, 105, 215, 0.22), transparent),
+        #1c2039;
+    }
+
+    .recipe-operator {
+      color: var(--paper);
+      font-size: 1.5rem;
+      font-weight: 900;
+      line-height: 1;
+      text-shadow: 2px 2px 0 #08060c;
+    }
+
+    .evolution-cost {
+      display: inline-grid;
+      place-items: center;
+      min-width: 44px;
+      height: 44px;
+      padding: 0 7px;
+      border: 3px solid #f0b64d;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 32% 25%, #bce5ff 0 10%, transparent 11%),
+        radial-gradient(circle at 50% 58%, #1f54b3 0 40%, #103279 66%, #081c46 100%);
+      color: #f6fbff;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 1.55rem;
+      font-weight: 900;
+      line-height: 1;
+      box-shadow: 0 0 0 3px #5a3b17, 3px 4px 0 #08060c;
+      text-shadow: 2px 2px 0 #0b1b42;
+    }
+
+    .evolution-note {
+      color: var(--muted);
+      font-size: 0.85rem;
+      font-weight: 800;
+      line-height: 1.2;
+    }
+
     .sr-only {
       position: absolute;
       width: 1px;
@@ -721,6 +1024,14 @@
       .board,
       .curve-section {
         grid-template-columns: 1fr;
+      }
+
+      .evolution-toolbar {
+        grid-template-columns: minmax(0, 1fr) auto auto;
+      }
+
+      .evolution-title-card {
+        grid-column: 1 / -1;
       }
 
       .side-panel {
@@ -755,6 +1066,15 @@
 
       .hud {
         grid-template-columns: 1fr 1fr;
+      }
+
+      .view-tabs {
+        grid-template-columns: 1fr;
+      }
+
+      .view-tab {
+        min-height: 52px;
+        font-size: 0.98rem;
       }
 
       .hud-panel {
@@ -804,6 +1124,25 @@
         grid-template-columns: 1fr;
       }
 
+      .evolution-toolbar {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .evolution-title-card,
+      .evolution-progress-card {
+        grid-column: 1 / -1;
+      }
+
+      .evolution-action {
+        min-width: 0;
+        min-height: 62px;
+        padding: 10px 12px;
+      }
+
+      .evolution-grid {
+        grid-template-columns: 1fr;
+      }
+
       .curve-panel,
       .target-panel,
       .wildcard-card {
@@ -829,6 +1168,10 @@
         grid-template-columns: 1fr;
       }
 
+      .evolution-toolbar {
+        grid-template-columns: 1fr;
+      }
+
       .save-panel {
         order: initial;
       }
@@ -838,6 +1181,9 @@
       .cost-card,
       .tool-button,
       .add-cost,
+      .view-tab,
+      .evolution-action,
+      .evolution-card,
       .step-button {
         transition: transform 120ms ease, filter 120ms ease, color 120ms ease;
       }
@@ -858,95 +1204,118 @@
         </div>
       </div>
 
-      <div class="hud" aria-label="Deck summary">
-        <div class="hud-panel total-panel">
-          <span class="label">Total Cards</span>
-          <strong class="total-count" id="total-count">0</strong>
-        </div>
-
-        <div class="hud-panel save-panel">
-          <div class="save-mark">
-            <svg class="save-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true">
-              <path d="M4 12.5l5 5L20 6"></path>
-            </svg>
-            <span>
-              <span class="save-title" id="save-title">Autosaved</span>
-              <span class="save-detail" id="save-detail">ready</span>
-            </span>
-          </div>
-        </div>
-
-        <button class="tool-button reset-button" type="button" id="reset-button">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true">
-            <path d="M19 8a8 8 0 1 0 1 7"></path>
-            <path d="M19 3v5h-5"></path>
-          </svg>
-          Reset
-        </button>
-
-        <button class="tool-button" type="button" id="undo-button">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true">
-            <path d="M9 7H4v5"></path>
-            <path d="M4 12c3-5 13-5 16 3"></path>
-          </svg>
-          Undo
-        </button>
+      <div class="view-tabs" role="tablist" aria-label="Card counter views">
+        <button class="view-tab is-active" type="button" id="counter-tab" role="tab" aria-selected="true" aria-controls="counter-view">Counter</button>
+        <button class="view-tab" type="button" id="evolutions-tab" role="tab" aria-selected="false" aria-controls="evolutions-view">Weapon Evolutions</button>
       </div>
 
-      <div class="board">
-        <section class="counter-grid" id="counter-grid" aria-label="Mana cost counters"></section>
+      <div class="view-panel counter-view" id="counter-view" role="tabpanel" aria-labelledby="counter-tab">
+        <div class="hud" aria-label="Deck summary">
+          <div class="hud-panel total-panel">
+            <span class="label">Total Cards</span>
+            <strong class="total-count" id="total-count">0</strong>
+          </div>
 
-        <aside class="side-panel" aria-label="Extra deck controls">
-          <button class="add-cost" id="add-cost-button" type="button">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true">
-              <path d="M12 4v16M4 12h16"></path>
-              <rect x="3" y="3" width="18" height="18"></rect>
+          <div class="hud-panel save-panel">
+            <div class="save-mark">
+              <svg class="save-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true">
+                <path d="M4 12.5l5 5L20 6"></path>
+              </svg>
+              <span>
+                <span class="save-title" id="save-title">Autosaved</span>
+                <span class="save-detail" id="save-detail">ready</span>
+              </span>
+            </div>
+          </div>
+
+          <button class="tool-button reset-button" type="button" id="reset-button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true">
+              <path d="M19 8a8 8 0 1 0 1 7"></path>
+              <path d="M19 3v5h-5"></path>
             </svg>
-            <span id="add-cost-label">Add 6</span>
+            Reset
           </button>
 
-          <section class="wildcard-card" aria-labelledby="wildcard-title">
-            <div class="wildcard-title" id="wildcard-title">Wild Cards</div>
-            <div class="wildcard-orb" aria-hidden="true">
-              <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="square" stroke-linejoin="miter">
-                <path d="M32 7l6 17 18-6-9 16 14 11-18 2 1 18-12-13-12 13 1-18-18-2 14-11-9-16 18 6z"></path>
+          <button class="tool-button" type="button" id="undo-button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true">
+              <path d="M9 7H4v5"></path>
+              <path d="M4 12c3-5 13-5 16 3"></path>
+            </svg>
+            Undo
+          </button>
+        </div>
+
+        <div class="board">
+          <section class="counter-grid" id="counter-grid" aria-label="Mana cost counters"></section>
+
+          <aside class="side-panel" aria-label="Extra deck controls">
+            <button class="add-cost" id="add-cost-button" type="button">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true">
+                <path d="M12 4v16M4 12h16"></path>
+                <rect x="3" y="3" width="18" height="18"></rect>
               </svg>
+              <span id="add-cost-label">Add 6</span>
+            </button>
+
+            <section class="wildcard-card" aria-labelledby="wildcard-title">
+              <div class="wildcard-title" id="wildcard-title">Wild Cards</div>
+              <div class="wildcard-orb" aria-hidden="true">
+                <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="square" stroke-linejoin="miter">
+                  <path d="M32 7l6 17 18-6-9 16 14 11-18 2 1 18-12-13-12 13 1-18-18-2 14-11-9-16 18 6z"></path>
+                </svg>
+              </div>
+              <div class="wildcard-count" id="wildcard-count">0</div>
+              <div class="stepper">
+                <button class="step-button minus" type="button" id="wildcard-minus" aria-label="Remove one wild card">-</button>
+                <button class="step-button plus" type="button" id="wildcard-plus" aria-label="Add one wild card">+</button>
+              </div>
+              <div class="card-divider" aria-hidden="true"></div>
+              <div class="wildcard-share" id="wildcard-share">0% of deck</div>
+            </section>
+          </aside>
+        </div>
+
+        <section class="curve-section">
+          <div class="curve-panel">
+            <div class="section-heading">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <rect x="4" y="13" width="3" height="7"></rect>
+                <rect x="10" y="8" width="3" height="12"></rect>
+                <rect x="16" y="4" width="3" height="16"></rect>
+              </svg>
+              Mana Curve
             </div>
-            <div class="wildcard-count" id="wildcard-count">0</div>
-            <div class="stepper">
-              <button class="step-button minus" type="button" id="wildcard-minus" aria-label="Remove one wild card">-</button>
-              <button class="step-button plus" type="button" id="wildcard-plus" aria-label="Add one wild card">+</button>
+            <div class="bars" id="curve-bars" aria-label="Mana curve chart"></div>
+          </div>
+
+          <div class="target-panel">
+            <div class="section-heading">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true">
+                <path d="M12 3v18M3 12h18"></path>
+                <path d="M6 6l12 12M18 6L6 18"></path>
+              </svg>
+              Target Ratio
             </div>
-            <div class="card-divider" aria-hidden="true"></div>
-            <div class="wildcard-share" id="wildcard-share">0% of deck</div>
-          </section>
-        </aside>
+            <div class="target-grid" id="target-grid" aria-label="Calculated target ratios"></div>
+            <p class="target-note">High cards raise lower-cost targets. Wild cards stay separate.</p>
+          </div>
+        </section>
       </div>
 
-      <section class="curve-section">
-        <div class="curve-panel">
-          <div class="section-heading">
-            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-              <rect x="4" y="13" width="3" height="7"></rect>
-              <rect x="10" y="8" width="3" height="12"></rect>
-              <rect x="16" y="4" width="3" height="16"></rect>
-            </svg>
-            Mana Curve
+      <section class="view-panel evolution-view" id="evolutions-view" role="tabpanel" aria-labelledby="evolutions-tab" hidden>
+        <div class="evolution-toolbar">
+          <div class="evolution-title-card">
+            <div class="evolution-title">Weapon Evolutions</div>
           </div>
-          <div class="bars" id="curve-bars" aria-label="Mana curve chart"></div>
+          <div class="evolution-progress-card">
+            <span class="label">Checked</span>
+            <strong id="evolution-progress">0 / 17</strong>
+          </div>
+          <button class="evolution-action back" type="button" id="back-to-counter-button">Back to Counter</button>
+          <button class="evolution-action clear" type="button" id="clear-evolutions-button">Clear</button>
         </div>
 
-        <div class="target-panel">
-          <div class="section-heading">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true">
-              <path d="M12 3v18M3 12h18"></path>
-              <path d="M6 6l12 12M18 6L6 18"></path>
-            </svg>
-            Target Ratio
-          </div>
-          <div class="target-grid" id="target-grid" aria-label="Calculated target ratios"></div>
-          <p class="target-note">Targets recalculate from your numbered card total and visible costs. Wild cards stay separate as flexible combo fillers.</p>
-        </div>
+        <div class="evolution-grid" id="evolution-grid" aria-label="Weapon evolution checklist"></div>
       </section>
     </section>
   </main>
@@ -972,15 +1341,40 @@
     const STORAGE_KEY = "vc-mana-counter-v1";
     const DEFAULT_COSTS = [0, 1, 2, 3, 4, 5];
     const HISTORY_LIMIT = 60;
+    const EVOLUTIONS = [
+      { id: "bloody-tear", name: "Bloody Tear", parts: ["Whip", "Hollow Heart"], result: "Bloody Tear", cost: "2" },
+      { id: "thunder-loop", name: "Thunder Loop", parts: ["Lightning Ring", "Duplicator"], result: "Thunder Loop", cost: "4" },
+      { id: "gorgeous-moon", name: "Gorgeous Moon", parts: ["Pentagram", "Crown"], result: "Gorgeous Moon", cost: "1+", note: "starts at 1" },
+      { id: "holy-wand", name: "Holy Wand", parts: ["Magic Wand", "Light Tome"], result: "Holy Wand", cost: "2" },
+      { id: "death-spiral", name: "Death Spiral", parts: ["Axe", "Candelabrador"], result: "Death Spiral", cost: "3" },
+      { id: "phieraggi", name: "Phieraggi", parts: ["Red Gun", "Blue Gun", "Tiragisu"], result: "Phieraggi", cost: "5" },
+      { id: "no-future", name: "No Future", parts: ["Runetracer", "Golden Armor"], result: "No Future", cost: "3" },
+      { id: "soul-eater", name: "Soul Eater", parts: ["Garlic", "Pummarola"], result: "Soul Eater", cost: "3" },
+      { id: "mannajja", name: "Mannajja", parts: ["Song of Mana", "Skull"], result: "Mannajja", cost: "5" },
+      { id: "thousand-edge", name: "Thousand Edge", parts: ["Knife", "Bracer"], result: "Thousand Edge", cost: "3" },
+      { id: "unholy-vespers", name: "Unholy Vespers", parts: ["King Bible", "Spellbinder"], result: "Unholy Vespers", cost: "2" },
+      { id: "valkyrie-turner", name: "Valkyrie Turner", parts: ["Shadow Pinion", "Wings"], result: "Valkyrie Turner", cost: "2" },
+      { id: "hellfire", name: "Hellfire", parts: ["Fire Wand", "Spinach"], result: "Hellfire", cost: "3" },
+      { id: "heaven-sword", name: "Heaven Sword", parts: ["Cross", "Clover"], result: "Heaven Sword", cost: "3" },
+      { id: "la-borra", name: "La Borra", parts: ["Santa Water", "Attractorb"], result: "La Borra", cost: "4" },
+      { id: "vicious-hunger", name: "Vicious Hunger", parts: ["Gatti Amari", "Stone Mask"], result: "Vicious Hunger", cost: "2" },
+      { id: "vandalier", name: "Vandalier", parts: ["Peachone", "Ebony Wings"], result: "Vandalier", cost: "5" }
+    ];
 
     const state = {
       costs: [...DEFAULT_COSTS],
       counts: Object.fromEntries(DEFAULT_COSTS.map((cost) => [cost, 0])),
       wildcards: 0,
+      evolutions: Object.fromEntries(EVOLUTIONS.map((evolution) => [evolution.id, false])),
+      activeView: "counter",
       history: []
     };
 
     const els = {
+      counterTab: document.querySelector("#counter-tab"),
+      evolutionsTab: document.querySelector("#evolutions-tab"),
+      counterView: document.querySelector("#counter-view"),
+      evolutionsView: document.querySelector("#evolutions-view"),
       grid: document.querySelector("#counter-grid"),
       bars: document.querySelector("#curve-bars"),
       targetGrid: document.querySelector("#target-grid"),
@@ -995,6 +1389,10 @@
       resetButton: document.querySelector("#reset-button"),
       saveTitle: document.querySelector("#save-title"),
       saveDetail: document.querySelector("#save-detail"),
+      evolutionGrid: document.querySelector("#evolution-grid"),
+      evolutionProgress: document.querySelector("#evolution-progress"),
+      backToCounterButton: document.querySelector("#back-to-counter-button"),
+      clearEvolutionsButton: document.querySelector("#clear-evolutions-button"),
       template: document.querySelector("#cost-card-template")
     };
 
@@ -1033,11 +1431,19 @@
       state.wildcards = Math.max(0, Number(snapshot.wildcards || 0));
     }
 
+    function normalizeEvolutions(evolutions) {
+      return Object.fromEntries(
+        EVOLUTIONS.map((evolution) => [evolution.id, Boolean(evolutions?.[evolution.id])])
+      );
+    }
+
     function loadState() {
       try {
         const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null");
         if (!saved || typeof saved !== "object") return;
         restoreSnapshot(saved);
+        state.evolutions = normalizeEvolutions(saved.evolutions);
+        state.activeView = saved.activeView === "evolutions" ? "evolutions" : "counter";
         lastSavedAt = saved.savedAt ? new Date(saved.savedAt) : null;
       } catch {
         localStorage.removeItem(STORAGE_KEY);
@@ -1049,6 +1455,8 @@
         costs: state.costs,
         counts: state.counts,
         wildcards: state.wildcards,
+        evolutions: state.evolutions,
+        activeView: state.activeView,
         savedAt: new Date().toISOString()
       };
       localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
@@ -1069,6 +1477,118 @@
       if (seconds < 5) return "just now";
       if (seconds < 60) return `${seconds}s ago`;
       return `${Math.floor(seconds / 60)}m ago`;
+    }
+
+    function completedEvolutionCount() {
+      return EVOLUTIONS.filter((evolution) => state.evolutions[evolution.id]).length;
+    }
+
+    function renderViewState() {
+      const showingEvolutions = state.activeView === "evolutions";
+      els.counterView.hidden = showingEvolutions;
+      els.evolutionsView.hidden = !showingEvolutions;
+      els.counterTab.classList.toggle("is-active", !showingEvolutions);
+      els.evolutionsTab.classList.toggle("is-active", showingEvolutions);
+      els.counterTab.setAttribute("aria-selected", String(!showingEvolutions));
+      els.evolutionsTab.setAttribute("aria-selected", String(showingEvolutions));
+    }
+
+    function setActiveView(view, shouldSave = true) {
+      state.activeView = view === "evolutions" ? "evolutions" : "counter";
+      renderViewState();
+      if (shouldSave) saveState();
+    }
+
+    function createCheckIcon() {
+      const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+      const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+      svg.setAttribute("viewBox", "0 0 24 24");
+      svg.setAttribute("fill", "none");
+      svg.setAttribute("stroke", "currentColor");
+      svg.setAttribute("stroke-width", "3");
+      svg.setAttribute("stroke-linecap", "square");
+      svg.setAttribute("stroke-linejoin", "miter");
+      svg.setAttribute("aria-hidden", "true");
+      path.setAttribute("d", "M4 12.5l5 5L20 6");
+      svg.append(path);
+      return svg;
+    }
+
+    function createRecipeToken(text, className = "") {
+      const token = document.createElement("span");
+      token.className = `recipe-token${className ? ` ${className}` : ""}`;
+      token.textContent = text;
+      return token;
+    }
+
+    function createOperator(text) {
+      const operator = document.createElement("span");
+      operator.className = "recipe-operator";
+      operator.textContent = text;
+      return operator;
+    }
+
+    function renderEvolutions() {
+      els.evolutionGrid.innerHTML = "";
+
+      EVOLUTIONS.forEach((evolution) => {
+        const complete = Boolean(state.evolutions[evolution.id]);
+        const card = document.createElement("label");
+        const checkbox = document.createElement("input");
+        const check = document.createElement("span");
+        const body = document.createElement("span");
+        const name = document.createElement("span");
+        const line = document.createElement("span");
+        const cost = document.createElement("span");
+
+        card.className = `evolution-card${complete ? " is-complete" : ""}`;
+        checkbox.className = "evolution-checkbox";
+        checkbox.type = "checkbox";
+        checkbox.checked = complete;
+        checkbox.setAttribute("aria-label", `${complete ? "Uncheck" : "Check"} ${evolution.name}`);
+        check.className = "evolution-check";
+        check.append(createCheckIcon());
+        body.className = "evolution-body";
+        name.className = "evolution-name";
+        name.textContent = evolution.name;
+        line.className = "recipe-line";
+        cost.className = "evolution-cost";
+        cost.textContent = evolution.cost;
+
+        evolution.parts.forEach((part, index) => {
+          if (index > 0) line.append(createOperator("+"));
+          line.append(createRecipeToken(part));
+        });
+        line.append(createOperator("="), createRecipeToken(evolution.result, "result"), cost);
+        body.append(name, line);
+
+        if (evolution.note) {
+          const note = document.createElement("span");
+          note.className = "evolution-note";
+          note.textContent = evolution.note;
+          body.append(note);
+        }
+
+        checkbox.addEventListener("change", () => {
+          state.evolutions[evolution.id] = checkbox.checked;
+          renderEvolutions();
+          saveState();
+        });
+
+        card.append(checkbox, check, body);
+        els.evolutionGrid.append(card);
+      });
+
+      const completed = completedEvolutionCount();
+      els.evolutionProgress.textContent = `${completed} / ${EVOLUTIONS.length}`;
+      els.clearEvolutionsButton.disabled = completed === 0;
+    }
+
+    function clearEvolutions() {
+      if (completedEvolutionCount() === 0) return;
+      state.evolutions = normalizeEvolutions();
+      renderEvolutions();
+      saveState();
     }
 
     function totalCards() {
@@ -1364,8 +1884,14 @@
       renderCards(total, targets);
       renderBars(total);
       renderTargets(percentages, targets);
+      renderEvolutions();
+      renderViewState();
     }
 
+    els.counterTab.addEventListener("click", () => setActiveView("counter"));
+    els.evolutionsTab.addEventListener("click", () => setActiveView("evolutions"));
+    els.backToCounterButton.addEventListener("click", () => setActiveView("counter"));
+    els.clearEvolutionsButton.addEventListener("click", clearEvolutions);
     els.addCostButton.addEventListener("click", addNextCost);
     els.wildcardMinus.addEventListener("click", decrementWildcard);
     els.wildcardPlus.addEventListener("click", incrementWildcard);

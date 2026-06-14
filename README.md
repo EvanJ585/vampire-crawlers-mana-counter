@@ -8,6 +8,7 @@ A static, browser-only card counter for Vampire Crawlers-style deck drafting.
 - Lets you add the next exact cost bucket from the side button.
 - Tracks card counts, total cards, target counts, and target percentages.
 - Tracks wild cards separately with no mana number and keeps them out of target ratios.
+- Adds a Weapon Evolutions tab with checkable evolution recipes and resulting costs.
 - Autosaves to browser `localStorage`.
 - Supports undo and reset.
 - Uses a combo-ladder target model that favors low-cost cards and reacts to high-cost cards already in the deck.
