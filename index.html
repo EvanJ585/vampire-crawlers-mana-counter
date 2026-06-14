@@ -6,7 +6,7 @@
   <meta name="description" content="A gothic pixel-card mana ratio counter and weapon evolution reminder for Vampire Crawlers.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23120d18'/%3E%3Ccircle cx='32' cy='32' r='22' fill='%231f54b3' stroke='%23f3c956' stroke-width='6'/%3E%3Ctext x='32' y='43' text-anchor='middle' font-size='30' font-family='Georgia' font-weight='900' fill='%23f4ead3'%3E0%3C/text%3E%3C/svg%3E">
   <title>Vampire Crawlers Card Counter</title>
   <style>
@@ -35,7 +35,7 @@
       --quiet: #766785;
       --ink: #09070c;
       --shadow: 0 16px 0 rgba(0, 0, 0, 0.34), 0 24px 42px rgba(0, 0, 0, 0.42);
-      --pixel-shadow: 3px 3px 0 #09070c, -1px -1px 0 rgba(255, 255, 255, 0.14);
+      --pixel-shadow: 2px 2px 0 #09070c;
       --font-pixel: "LanaPixel", "Lana Pixel", "Pixelify Sans", "Trebuchet MS", sans-serif;
       font-family: var(--font-pixel);
     }
@@ -146,18 +146,20 @@
       margin: 0;
       color: var(--gold);
       font-family: var(--font-pixel);
-      font-size: clamp(2.35rem, 4.8vw, 5.2rem);
-      line-height: 0.92;
+      font-size: clamp(2.1rem, 4.5vw, 4.65rem);
+      font-weight: 400;
+      line-height: 0.95;
       letter-spacing: 0;
-      text-shadow: 5px 5px 0 #09070c, 0 0 18px rgba(243, 201, 86, 0.26);
+      text-shadow: 3px 3px 0 #09070c, 0 0 14px rgba(243, 201, 86, 0.22);
     }
 
     .subtitle {
       margin: 12px 0 0;
       color: var(--purple);
       font-size: clamp(1rem, 2vw, 1.65rem);
+      font-weight: 400;
       line-height: 1.1;
-      text-shadow: 3px 3px 0 #09070c;
+      text-shadow: 2px 2px 0 #09070c;
     }
 
     .subtitle-row {
@@ -189,7 +191,7 @@
       color: var(--blue-hi);
       box-shadow: inset 0 0 0 3px #08060c, 2px 3px 0 #09070c;
       font-size: 1.05rem;
-      font-weight: 900;
+      font-weight: 500;
       line-height: 1;
       text-shadow: 2px 2px 0 #08060c;
     }
@@ -267,7 +269,7 @@
       box-shadow: inset 0 0 0 3px #08060c, inset 0 0 0 5px #2b2030;
       color: var(--purple);
       font-size: 1.08rem;
-      font-weight: 900;
+      font-weight: 500;
       text-transform: uppercase;
       text-shadow: 2px 2px 0 #08060c;
     }
@@ -320,7 +322,7 @@
 
     .label {
       color: var(--purple);
-      font-weight: 800;
+      font-weight: 500;
       font-size: 0.9rem;
       line-height: 1;
       text-transform: uppercase;
@@ -330,7 +332,7 @@
       color: var(--gold);
       font-family: var(--font-pixel);
       font-size: 3.1rem;
-      font-weight: 900;
+      font-weight: 400;
       line-height: 0.9;
       text-shadow: var(--pixel-shadow);
     }
@@ -356,7 +358,7 @@
     .save-title {
       display: block;
       color: #a6f36e;
-      font-weight: 900;
+      font-weight: 500;
       font-size: 1.1rem;
       line-height: 1.1;
     }
@@ -376,7 +378,7 @@
       padding: 12px 20px;
       color: var(--purple);
       font-size: 1.15rem;
-      font-weight: 900;
+      font-weight: 500;
       text-transform: uppercase;
       box-shadow: inset 0 0 0 3px #08060c, inset 0 0 0 5px #3a2a40;
     }
@@ -463,7 +465,7 @@
       color: #f6fbff;
       font-family: var(--font-pixel);
       font-size: 2.45rem;
-      font-weight: 900;
+      font-weight: 500;
       line-height: 1;
       border-radius: 50%;
       border: 4px solid #c08a26;
@@ -482,7 +484,7 @@
       color: var(--paper);
       font-family: var(--font-pixel);
       font-size: clamp(3.1rem, 7vw, 4.8rem);
-      font-weight: 900;
+      font-weight: 400;
       line-height: 0.95;
       text-shadow: var(--pixel-shadow);
       min-height: 1em;
@@ -503,7 +505,7 @@
       display: grid;
       place-items: center;
       font-size: 2.1rem;
-      font-weight: 900;
+      font-weight: 500;
       line-height: 0.7;
     }
 
@@ -540,7 +542,7 @@
       display: grid;
       gap: 7px;
       text-align: center;
-      font-weight: 800;
+      font-weight: 500;
     }
 
     .share {
@@ -593,7 +595,7 @@
       gap: 12px;
       color: var(--gold);
       text-align: center;
-      font-weight: 900;
+      font-weight: 500;
       text-transform: uppercase;
     }
 
@@ -656,7 +658,7 @@
     .wildcard-title {
       color: var(--purple);
       font-size: 1.15rem;
-      font-weight: 900;
+      font-weight: 500;
       line-height: 1.1;
       text-transform: uppercase;
       text-shadow: 2px 2px 0 #08060c;
@@ -703,7 +705,7 @@
       color: var(--gold);
       font-family: var(--font-pixel);
       font-size: clamp(3.2rem, 7vw, 4.5rem);
-      font-weight: 900;
+      font-weight: 500;
       line-height: 0.95;
       text-shadow: var(--pixel-shadow);
     }
@@ -711,7 +713,7 @@
     .wildcard-share {
       color: var(--blue-hi);
       font-size: 1rem;
-      font-weight: 900;
+      font-weight: 500;
       line-height: 1.2;
       text-transform: uppercase;
     }
@@ -739,7 +741,7 @@
       margin-bottom: 14px;
       color: var(--purple);
       font-size: 1.25rem;
-      font-weight: 900;
+      font-weight: 500;
       text-transform: uppercase;
       text-shadow: 2px 2px 0 #08060c;
     }
@@ -800,7 +802,7 @@
       color: var(--paper);
       text-align: center;
       font-size: 1rem;
-      font-weight: 900;
+      font-weight: 500;
       line-height: 1;
       text-shadow: 2px 2px 0 #08060c;
     }
@@ -829,7 +831,7 @@
 
     .target-chip span {
       color: var(--gold);
-      font-weight: 900;
+      font-weight: 400;
       font-size: 1.1rem;
     }
 
@@ -865,7 +867,7 @@
       color: var(--gold);
       font-family: var(--font-pixel);
       font-size: clamp(1.65rem, 3vw, 2.4rem);
-      font-weight: 900;
+      font-weight: 500;
       line-height: 0.95;
       text-shadow: var(--pixel-shadow);
     }
@@ -877,7 +879,7 @@
       min-width: 150px;
       padding: 12px 18px;
       color: var(--purple);
-      font-weight: 900;
+      font-weight: 500;
       text-transform: uppercase;
     }
 
@@ -947,7 +949,7 @@
     .evolution-name {
       color: var(--gold);
       font-size: 1.08rem;
-      font-weight: 900;
+      font-weight: 500;
       line-height: 1.05;
       text-shadow: 2px 2px 0 #08060c;
     }
@@ -993,7 +995,7 @@
     .recipe-label {
       color: var(--paper);
       font-size: 0.9rem;
-      font-weight: 900;
+      font-weight: 500;
       line-height: 1;
       overflow-wrap: anywhere;
       text-shadow: 2px 2px 0 #08060c;
@@ -1006,7 +1008,7 @@
     .recipe-operator {
       color: var(--paper);
       font-size: 1.55rem;
-      font-weight: 900;
+      font-weight: 600;
       line-height: 1;
       text-shadow: 2px 2px 0 #08060c;
     }
@@ -1034,8 +1036,17 @@
     .evolution-note {
       color: var(--muted);
       font-size: 0.85rem;
-      font-weight: 800;
+      font-weight: 400;
       line-height: 1.2;
+    }
+
+    .evolution-description {
+      max-width: 66ch;
+      color: var(--muted);
+      font-size: 0.86rem;
+      font-weight: 400;
+      line-height: 1.25;
+      text-shadow: 1px 1px 0 #08060c;
     }
 
     .sr-only {
@@ -1413,10 +1424,10 @@
       { id: "gorgeous-moon", name: "Gorgeous Moon", parts: ["Pentagram", "Crown"], result: "Gorgeous Moon", cost: "1+", note: "starts at 1" },
       { id: "holy-wand", name: "Holy Wand", parts: ["Magic Wand", "Light Tome"], result: "Holy Wand", cost: "2" },
       { id: "death-spiral", name: "Death Spiral", parts: ["Axe", "Candelabrador"], result: "Death Spiral", cost: "3" },
-      { id: "phieraggi", name: "Phieraggi", parts: ["Red Gun", "Blue Gun", "Tiragisu"], result: "Phieraggi", cost: "5" },
-      { id: "no-future", name: "No Future", parts: ["Runetracer", "Golden Armor"], result: "No Future", cost: "3" },
+      { id: "phieraggi", name: "Phieraggi", parts: ["Phiera Der Tuphello", "Eight The Sparrow", "Tirajisú"], result: "Phieraggi", cost: "5" },
+      { id: "no-future", name: "NO FUTURE", parts: ["Runetracer", "Golden Armor"], result: "NO FUTURE", cost: "3" },
       { id: "soul-eater", name: "Soul Eater", parts: ["Garlic", "Pummarola"], result: "Soul Eater", cost: "3" },
-      { id: "mannajja", name: "Mannajja", parts: ["Song of Mana", "Skull"], result: "Mannajja", cost: "5" },
+      { id: "mannajja", name: "Mannajja", parts: ["Song of Mana", "Skull O'Maniac"], result: "Mannajja", cost: "5" },
       { id: "thousand-edge", name: "Thousand Edge", parts: ["Knife", "Bracer"], result: "Thousand Edge", cost: "3" },
       { id: "unholy-vespers", name: "Unholy Vespers", parts: ["King Bible", "Spellbinder"], result: "Unholy Vespers", cost: "2" },
       { id: "valkyrie-turner", name: "Valkyrie Turner", parts: ["Shadow Pinion", "Wings"], result: "Valkyrie Turner", cost: "2" },
@@ -1426,6 +1437,200 @@
       { id: "vicious-hunger", name: "Vicious Hunger", parts: ["Gatti Amari", "Stone Mask"], result: "Vicious Hunger", cost: "2" },
       { id: "vandalier", name: "Vandalier", parts: ["Peachone", "Ebony Wings"], result: "Vandalier", cost: "5" }
     ];
+
+    const ITEM_DATA = {
+      "Whip": {
+        image: "https://vampire.survivors.wiki/images/CSprite-Whip.png?3035f",
+        description: "Deal 8 damage to multiple enemies."
+      },
+      "Hollow Heart": {
+        image: "https://vampire.survivors.wiki/images/CSprite-Hollow_Heart.png?6217e"
+      },
+      "Bloody Tear": {
+        image: "https://vampire.survivors.wiki/images/CSprite-Bloody_Tear.png?86dac",
+        description: "Deal 40 damage to multiple enemies. On Crit: Heal 3."
+      },
+      "Lightning Ring": {
+        image: "https://vampire.survivors.wiki/images/CSprite-Lightning_Ring.png?620bc",
+        description: "Deal 125 damage."
+      },
+      "Duplicator": {
+        image: "https://vampire.survivors.wiki/images/CSprite-Duplicator.png?a2365"
+      },
+      "Thunder Loop": {
+        image: "https://vampire.survivors.wiki/images/CSprite-Thunder_Loop.png?ec1fd",
+        description: "Deal 150 damage. Attacks again at the end of the turn."
+      },
+      "Pentagram": {
+        image: "https://vampire.survivors.wiki/images/CSprite-Pentagram.png?12185",
+        description: "Erase 8 rows. Countdown."
+      },
+      "Crown": {
+        image: "https://vampire.survivors.wiki/images/CSprite-Crown.png?11b23"
+      },
+      "Gorgeous Moon": {
+        image: "https://vampire.survivors.wiki/images/CSprite-Gorgeous_Moon.png?d8ba5",
+        description: "Erase* 1 enemy. Moonrise."
+      },
+      "Magic Wand": {
+        image: "https://vampire.survivors.wiki/images/CSprite-Magic_Wand.png?deeab",
+        description: "Deal 30 damage. Prioritize attackers."
+      },
+      "Light Tome": {
+        image: "https://vampire.survivors.wiki/images/CSprite-Light_Tome.png?ad29c"
+      },
+      "Holy Wand": {
+        image: "https://vampire.survivors.wiki/images/CSprite-Holy_Wand.png?855e6",
+        description: "Deal 150 damage. Prioritize attackers."
+      },
+      "Axe": {
+        image: "https://vampire.survivors.wiki/images/CSprite-Axe.png?c8e91",
+        description: "Deal 45 damage to multiple enemies with a chance to Knockback."
+      },
+      "Candelabrador": {
+        image: "https://vampire.survivors.wiki/images/CSprite-Candelabrador.png?07208"
+      },
+      "Death Spiral": {
+        image: "https://vampire.survivors.wiki/images/CSprite-Death_Spiral.png?d474f",
+        description: "Deal 160 damage to the front row. Crit."
+      },
+      "Phiera Der Tuphello": {
+        image: "https://vampire.survivors.wiki/images/CSprite-Phiera_Der_Tuphello.png?9be7f",
+        description: "Deal 70 damage."
+      },
+      "Eight The Sparrow": {
+        image: "https://vampire.survivors.wiki/images/CSprite-Eight_The_Sparrow.png?1cd8f",
+        description: "Deal 35 damage."
+      },
+      "Tirajisú": {
+        image: "https://vampire.survivors.wiki/images/CSprite-Tirajis%C3%BA.png?78815"
+      },
+      "Phieraggi": {
+        image: "https://vampire.survivors.wiki/images/CSprite-Phieraggi.png?8f45e",
+        description: "Deal 350 damage."
+      },
+      "Runetracer": {
+        image: "https://vampire.survivors.wiki/images/CSprite-Runetracer.png?dff44",
+        description: "Deal 15 damage. Bounces to deal more damage."
+      },
+      "Golden Armor": {
+        image: "https://vampire.survivors.wiki/images/CSprite-Golden_Armor.png?58ecf"
+      },
+      "NO FUTURE": {
+        image: "https://vampire.survivors.wiki/images/CSprite-NO_FUTURE.png?b7d33",
+        description: "Deal 15 damage. Bounces and explodes."
+      },
+      "Garlic": {
+        image: "https://vampire.survivors.wiki/images/CSprite-Garlic.png?ae20c",
+        description: "Deal 10 damage to the front row. Disarm."
+      },
+      "Pummarola": {
+        image: "https://vampire.survivors.wiki/images/CSprite-Pummarola.png?cad0c"
+      },
+      "Soul Eater": {
+        image: "https://vampire.survivors.wiki/images/CSprite-Soul_Eater.png?3b26f",
+        description: "Deal 100 damage to the front row. Heal 3. Disarm*."
+      },
+      "Song of Mana": {
+        image: "https://vampire.survivors.wiki/images/CSprite-Song_of_Mana.png?fd002"
+      },
+      "Skull O'Maniac": {
+        image: "https://vampire.survivors.wiki/images/CSprite-Skull_O%27Maniac.png?5c1db"
+      },
+      "Mannajja": {
+        image: "https://vampire.survivors.wiki/images/CSprite-Mannajja.png?67232",
+        description: "Deal 79 damage to multiple enemies. Raw Mana*."
+      },
+      "Knife": {
+        image: "https://vampire.survivors.wiki/images/CSprite-Knife.png?2d408",
+        description: "Deal 40 damage. Crit."
+      },
+      "Bracer": {
+        image: "https://vampire.survivors.wiki/images/CSprite-Bracer.png?ca2cc"
+      },
+      "Thousand Edge": {
+        image: "https://vampire.survivors.wiki/images/CSprite-Thousand_Edge.png?b3809",
+        description: "Deal 180 damage."
+      },
+      "King Bible": {
+        image: "https://vampire.survivors.wiki/images/CSprite-King_Bible.png?46bad",
+        description: "Deal 40 damage with a chance to Knockback."
+      },
+      "Spellbinder": {
+        image: "https://vampire.survivors.wiki/images/CSprite-Spellbinder.png?260b4"
+      },
+      "Unholy Vespers": {
+        image: "https://vampire.survivors.wiki/images/CSprite-Unholy_Vespers.png?ba737",
+        description: "Deal 120 damage with a chance to Knockback."
+      },
+      "Shadow Pinion": {
+        image: "https://vampire.survivors.wiki/images/CSprite-Shadow_Pinion.png?33d2f",
+        description: "Deal 90 damage. Retrigger."
+      },
+      "Wings": {
+        image: "https://vampire.survivors.wiki/images/CSprite-Wings.png?f9238"
+      },
+      "Valkyrie Turner": {
+        image: "https://vampire.survivors.wiki/images/CSprite-Valkyrie_Turner.png?efcb2",
+        description: "Deal 25 damage to the front row. Valkyrie's Inferno."
+      },
+      "Fire Wand": {
+        image: "https://vampire.survivors.wiki/images/CSprite-Fire_Wand.png?b68b7",
+        description: "Deal 45 damage."
+      },
+      "Spinach": {
+        image: "https://vampire.survivors.wiki/images/CSprite-Spinach.png?4c651"
+      },
+      "Hellfire": {
+        image: "https://vampire.survivors.wiki/images/CSprite-Hellfire.png?7c3f1",
+        description: "Deal 225 damage with a chance to Knockback."
+      },
+      "Cross": {
+        image: "https://vampire.survivors.wiki/images/CSprite-Cross.png?1a5c8",
+        description: "Deal 80 damage."
+      },
+      "Clover": {
+        image: "https://vampire.survivors.wiki/images/CSprite-Clover.png?5e270"
+      },
+      "Heaven Sword": {
+        image: "https://vampire.survivors.wiki/images/CSprite-Heaven_Sword.png?42987",
+        description: "Deal 100 damage. Crit."
+      },
+      "Santa Water": {
+        image: "https://vampire.survivors.wiki/images/CSprite-Santa_Water.png?21ca2",
+        description: "Deal 60 damage. Burns enemies after this turn."
+      },
+      "Attractorb": {
+        image: "https://vampire.survivors.wiki/images/CSprite-Attractorb.png?279a1"
+      },
+      "La Borra": {
+        image: "https://vampire.survivors.wiki/images/CSprite-La_Borra.png?316ae",
+        description: "Deal 150 damage. Burns enemies after every turn."
+      },
+      "Gatti Amari": {
+        image: "https://vampire.survivors.wiki/images/CSprite-Gatti_Amari.png?0445c",
+        description: "Deal 25 damage. Chance to Scuffle."
+      },
+      "Stone Mask": {
+        image: "https://vampire.survivors.wiki/images/CSprite-Stone_Mask.png?4c651"
+      },
+      "Vicious Hunger": {
+        image: "https://vampire.survivors.wiki/images/CSprite-Vicious_Hunger.png?e1fe6",
+        description: "Deal 100 damage. May turn enemies into coins."
+      },
+      "Peachone": {
+        image: "https://vampire.survivors.wiki/images/CSprite-Peachone.png?e7230",
+        description: "Deal 100 damage. Bombards enemies after every turn."
+      },
+      "Ebony Wings": {
+        image: "https://vampire.survivors.wiki/images/CSprite-Ebony_Wings.png?2fcc5",
+        description: "Deal 140 damage. Bombards enemies after every turn."
+      },
+      "Vandalier": {
+        image: "https://vampire.survivors.wiki/images/CSprite-Vandalier.png?35169",
+        description: "Deal 500 damage with a chance to Knockback. Big Bird."
+      }
+    };
 
     const state = {
       costs: [...DEFAULT_COSTS],
@@ -1566,15 +1771,19 @@
     }
 
     function createRecipeItem(name, className = "") {
+      const data = ITEM_DATA[name] || {};
       const item = document.createElement("span");
       const icon = document.createElement("img");
       const label = document.createElement("span");
 
       item.className = `recipe-item${className ? ` ${className}` : ""}`;
       icon.className = "recipe-icon";
-      icon.src = `assets/items/${slugifyName(name)}.png`;
+      icon.src = data.image || `assets/items/${slugifyName(name)}.png`;
       icon.alt = "";
       icon.loading = "lazy";
+      icon.decoding = "async";
+      icon.referrerPolicy = "no-referrer";
+      if (data.description) item.title = data.description;
       label.className = "recipe-label";
       label.textContent = name;
       item.append(icon, label);
@@ -1593,6 +1802,7 @@
       els.evolutionGrid.innerHTML = "";
 
       EVOLUTIONS.forEach((evolution) => {
+        const resultData = ITEM_DATA[evolution.result] || {};
         const card = document.createElement("article");
         const body = document.createElement("span");
         const name = document.createElement("span");
@@ -1610,6 +1820,13 @@
         });
         line.append(createOperator("="), createRecipeItem(evolution.result, "result"), createCostBadge(evolution.cost));
         body.append(name, line);
+
+        if (resultData.description) {
+          const description = document.createElement("span");
+          description.className = "evolution-description";
+          description.textContent = resultData.description;
+          body.append(description);
+        }
 
         if (evolution.note) {
           const note = document.createElement("span");
