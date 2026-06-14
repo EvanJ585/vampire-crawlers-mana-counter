@@ -617,6 +617,16 @@
       text-shadow: 2px 2px 0 #08060c;
     }
 
+    .add-cost small {
+      display: block;
+      max-width: 14ch;
+      color: var(--blue-hi);
+      font-size: 0.82rem;
+      line-height: 1.2;
+      text-transform: none;
+      text-shadow: 1px 1px 0 #08060c;
+    }
+
     .wildcard-card {
       position: relative;
       border: 2px solid var(--line);
@@ -1322,7 +1332,8 @@
                 <path d="M12 4v16M4 12h16"></path>
                 <rect x="3" y="3" width="18" height="18"></rect>
               </svg>
-              <span id="add-cost-label">Add 6</span>
+              <span id="add-cost-label">Add rare cost 6 counter</span>
+              <small>For unusual high costs</small>
             </button>
 
             <section class="wildcard-card" aria-labelledby="wildcard-title">
@@ -2172,7 +2183,9 @@
       } else {
         els.wildcardShare.textContent = `${formatPercent(wildcardShare)} of deck | soft target ${targets.wildcards} | on target`;
       }
-      els.addCostLabel.textContent = `Add ${maxVisibleCost() + 1}`;
+      const nextCost = maxVisibleCost() + 1;
+      els.addCostLabel.textContent = `Add rare cost ${nextCost} counter`;
+      els.addCostButton.setAttribute("aria-label", `Add a counter for rare cost ${nextCost} cards`);
       els.undoButton.disabled = state.history.length === 0;
       els.resetButton.disabled = total === 0;
 
