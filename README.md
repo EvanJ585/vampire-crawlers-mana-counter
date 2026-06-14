@@ -8,6 +8,12 @@ I made this because I kept looking through my deck during a run to count how man
 
 I wanted something neat and clean that I could leave open on a second monitor while I played, so I could update the counts quickly without making a card list or stopping the run.
 
+## Screenshots
+
+![Counter view](assets/readme/counter.png)
+
+![Weapon evolutions view](assets/readme/weapon-evolutions.png)
+
 ## What it does
 
 - Tracks mana-cost buckets from `0` through `5` by default.
@@ -51,22 +57,10 @@ Example targets:
 - `30 cards`: `7 / 6 / 6 / 4 / 2 / 1 / 4 wild`
 - `40 cards`: `9 / 8 / 7 / 6 / 3 / 2 / 5 wild`
 
-## GitHub Pages
+## Download / Use It
 
-This project is a plain static site. Publish from the repository root on the `main` branch.
+This is a plain static site with no build step.
 
-If using GitHub CLI:
-
-```powershell
-gh repo create vampire-crawlers-mana-counter --public --source . --remote origin --push
-gh api repos/EvanJ585/vampire-crawlers-mana-counter/pages -X POST -f source.branch=main -f source.path=/
-```
-
-If creating the repo manually on GitHub:
-
-```powershell
-git remote add origin https://github.com/EvanJ585/vampire-crawlers-mana-counter.git
-git push -u origin main
-```
-
-Then open the repository settings, go to Pages, and publish from the `main` branch root.
+- Download the ZIP from GitHub, unzip it, and open `index.html` in a browser.
+- Fork or clone the repo if you want to change it or make your own version.
+- Your counts autosave in your own browser only; there is no login, database, or cloud sync.
